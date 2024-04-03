@@ -1,0 +1,14 @@
+.footer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    max-height: 40px;
+    min-width: 78vw;
+    height: 15vh;
+
+    color: #fff;
+    background-color: #59678a;
+
+    border-radius: 0.5em;
+}

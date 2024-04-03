@@ -1,0 +1,15 @@
+.viewport {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    min-width: 100vw;
+    max-height: fit-content;
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    min-height: 100vh;
+}

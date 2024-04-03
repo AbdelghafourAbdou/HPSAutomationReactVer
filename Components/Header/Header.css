@@ -1,0 +1,19 @@
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    max-height: 55px;
+    min-width: 78vw;
+    height: 15vh;
+
+    color: #fff;
+    background-color: #59678a;
+
+    border-radius: 0.5em;
+}
+
+.header img {
+    width: 102px;
+    height: auto;
+}
