@@ -1,0 +1,98 @@
+.adminContainer {
+    min-height: 78vh;    
+    background-color: #393e46;
+    border-radius: 5px;
+}
+
+.titleContainer {
+    min-height: 5vh;
+    background-color: #142847;
+    text-align: center;
+    line-height: 3em;
+    font-size: 1.5em;
+
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25em;
+}
+
+.buttonsContainer button:hover , .configButtons button:hover{
+    background-color: #dfe3e5;
+    color: #092635;
+}
+
+.activeProfile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.environmentConfig {
+    display: flex;
+    flex-direction: row;
+    flex-basis: auto;
+    gap: 0.5em;
+
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.config {
+    min-width: 25vw;
+    min-height: 41vh;
+    border: 2px solid #96a7c4;
+    border-radius: 5px;
+    box-shadow: 1px 2px 2px #5b6577;
+    text-align: left;
+
+    display: grid;
+    align-content: space-between;
+}
+
+.configTitle {
+    background-color: #96a7c4;
+    font-size: larger;
+}
+.config h1, p {
+    padding: 8px;
+}
+
+.configButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 2px;
+
+    margin-bottom: 0.5em;
+    margin-left: 0.4em;
+}
+
+.editButton {
+    background-color: #17a2b8;
+}
+
+.emailConfig {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.emailConfig input, select, option {
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.emailConfig input {
+    min-width: 300px;
+    min-height: 30px;
+}

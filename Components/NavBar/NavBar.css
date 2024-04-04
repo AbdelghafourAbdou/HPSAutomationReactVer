@@ -8,6 +8,7 @@
     padding: 10px;
 
     min-width: 180px;
+    max-height: 94vh;
 }
 
 .navbar {

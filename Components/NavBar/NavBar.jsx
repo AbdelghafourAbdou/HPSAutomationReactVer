@@ -31,12 +31,12 @@ export default function NavBar() {
                 <button className='buttonContainer' id='0' onClick={handleClick}>
                     <i className='buttonIcon'><MdDashboard /></i>
                     Dashboard
-                    <Link open={openTab}>{[0, 'https://www.google.com/', 'Global Statistics']}</Link>
+                    <Link open={openTab}>{[0, '/', 'Global Statistics']}</Link>
                 </button>
                 <button className='buttonContainer' id='1' onClick={handleClick}>
                     <i className='buttonIcon'><FaStream /></i>
                     API Stream
-                    <Link open={openTab}>{[1, ['stat', 'proj', 'ws', 'tc', 'ts'], ['Statistics',
+                    <Link open={openTab}>{[1, ['stat', 'proj', 'ws', '/testCases', 'ts'], ['Statistics',
                         'Projects', 'Web Services', 'Test Cases', 'Test Suits']]}</Link>
                 </button>
                 <button className='buttonContainer' id='2' onClick={handleClick}>
@@ -57,7 +57,7 @@ export default function NavBar() {
                 <button className='buttonContainer' id='5' onClick={handleClick}>
                     <i className='buttonIcon'><MdAdminPanelSettings /></i>
                     Administration
-                    <Link open={openTab}>{[5, '/', 'Gonfigurations']}</Link>
+                    <Link open={openTab}>{[5, '/Administration', 'Gonfigurations']}</Link>
                 </button>
             </nav>
         </div>
