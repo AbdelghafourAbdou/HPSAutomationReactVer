@@ -12,8 +12,9 @@ export async function action({ request }) {
 
     const req = { project, status, testCase, webService, wsVersion };
     try {
+        const headers = new Headers({ 'Content-Type': 'application/json' });
         const res = await fetch('http://localhost:8088/pwcAutomationTest/searchTestCases?page=0&size=6',
-            { method: 'POST', body: JSON.stringify(req) });
+            { method: 'POST', headers, body: JSON.stringify(req) });
 
         if (!res.ok) {
             throw new Error;
