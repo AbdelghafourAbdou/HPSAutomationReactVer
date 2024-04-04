@@ -10,8 +10,9 @@ export async function action({ request }) {
     const sentIndicator = formData.get('sentIndicator');
     const message = { 'id': null, name, email, type, sentIndicator };
     try {
-        const res = await fetch('http://localhost:8080/pwcAutomationTest/newReportRecipient',
-            { method: 'POST', body: JSON.stringify(message) });
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        const res = await fetch('http://localhost:8088/pwcAutomationTest/newReportRecipient',
+            { method: 'POST', headers, body: JSON.stringify(message) });
 
         if (!res.ok) {
             throw {
@@ -37,7 +38,7 @@ export default function EmailConfig() {
 
     useEffect(() => {
         const form = formRef.current;
-        status === 'idle' && !formData.error ?  form?.reset() : null;
+        status === 'idle' && !formData ?  form?.reset() : null;
 
     }, [formData, status])
 
