@@ -13,3 +13,20 @@
 
     min-height: 100vh;
 }
+
+.displayContainer {
+    min-height: 78vh;
+    background-color: #393e46;
+    border-radius: 5px;
+}
+
+.titleContainer {
+    min-height: 5vh;
+    background-color: #142847;
+    text-align: center;
+    line-height: 3em;
+    font-size: 1.5em;
+
+    margin-bottom: 5px;
+    border-radius: 5px;
+}

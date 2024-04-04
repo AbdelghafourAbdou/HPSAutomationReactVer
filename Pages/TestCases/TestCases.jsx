@@ -32,7 +32,7 @@ export default function TestCases() {
     const status = navigate.state;
 
     return (
-        <div className='testCasesContainer'>
+        <>
             <div className='titleContainer'>
                 <h1>Test Cases</h1>
             </div>
@@ -78,6 +78,6 @@ export default function TestCases() {
                 </div>
                 <button disabled={status === 'submitting'}>{status === 'submitting' ? 'Searching...' : 'Search'}</button>
             </Form>
-        </div>
+        </>
     )
 }

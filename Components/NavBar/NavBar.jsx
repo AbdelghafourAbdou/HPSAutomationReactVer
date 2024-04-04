@@ -31,7 +31,7 @@ export default function NavBar() {
                 <button className='buttonContainer' id='0' onClick={handleClick}>
                     <i className='buttonIcon'><MdDashboard /></i>
                     Dashboard
-                    <Link open={openTab}>{[0, '/', 'Global Statistics']}</Link>
+                    <Link open={openTab}>{[0, '/home', 'Global Statistics']}</Link>
                 </button>
                 <button className='buttonContainer' id='1' onClick={handleClick}>
                     <i className='buttonIcon'><FaStream /></i>

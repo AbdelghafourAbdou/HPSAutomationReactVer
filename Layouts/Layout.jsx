@@ -11,7 +11,9 @@ export default function Layout() {
             <NavBar />
             <div className='contentContainer'>
                 <Header />
-                <Outlet />
+                <div className='displayContainer'>
+                    <Outlet />
+                </div>
                 <Footer />
             </div>
         </div>

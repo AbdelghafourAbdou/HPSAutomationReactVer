@@ -4,30 +4,16 @@
     border-radius: 5px;
 }
 
-.titleContainer {
-    min-height: 5vh;
-    background-color: #142847;
-    text-align: center;
-    line-height: 3em;
-    font-size: 1.5em;
-
-    margin-bottom: 5px;
-    border-radius: 5px;
-}
-
 .testCaseFormContainer{
     display: flex;
     flex-direction: row;
-    gap: 0.45em;
-
     justify-content: space-evenly;
-
+    gap: 0.45em;
     margin-left: 1em;
 }
 
 .fieldContainer{
     display: flex;
     flex-direction: column;
-
     align-items: flex-start;
 }

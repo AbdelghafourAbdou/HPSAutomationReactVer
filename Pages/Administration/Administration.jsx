@@ -36,7 +36,7 @@ export default function Administration() {
     const mode = arr[0][0] !== 'none' ? ` / ${toProper(arr[0][0])}` : null;
 
     return (
-        <div className='adminContainer'>
+        <>
             <div className='titleContainer'>
                 <h1>Administration{mode}</h1>
             </div>
@@ -54,6 +54,6 @@ export default function Administration() {
                     <EmailConfig />
                 }
             </div>
-        </div>
+        </>
     )
 }
