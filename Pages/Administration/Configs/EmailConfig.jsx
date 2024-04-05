@@ -42,8 +42,6 @@ export default function EmailConfig() {
 
     }, [formData, status])
 
-    console.log(formData);
-
     return (
         <Form ref={formRef} className='emailConfig' method="post" replace>
             <label>

@@ -1,4 +1,4 @@
-import { Form, useNavigation } from 'react-router-dom';
+import { Form, useActionData, useNavigation } from 'react-router-dom';
 import './TestCases.css'
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -28,6 +28,7 @@ export async function action({ request }) {
 }
 
 export default function TestCases() {
+    const actionData = useActionData();
     const navigate = useNavigation();
     const status = navigate.state;
 

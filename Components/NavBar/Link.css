@@ -1,11 +1,18 @@
 .linksContainer {
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-
-    max-width: max-content;
-
     align-items: flex-start;
     justify-content: center;
     gap: 3px;
+
+    margin: 0 auto;
+    max-width: max-content;
+}
+
+.activeLink {
+    color: rgb(233, 132, 148);
+}
+
+.activeLink:hover {
+    color: rgb(234, 95, 118);
 }

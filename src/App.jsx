@@ -2,6 +2,7 @@ import { } from 'react';
 import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import Layout from '../Layouts/Layout';
 import Stats from '../Pages/Stats/Stats';
+import Projects from '../Pages/Projects/Projects';
 import TestCases, { action as testCasesAction } from '../Pages/TestCases/TestCases';
 import Administration from '../Pages/Administration/Administration';
 import { action as emailAction } from '../Pages/Administration/Configs/EmailConfig';
@@ -13,6 +14,7 @@ function App() {
     createRoutesFromElements(
       <Route path='/' element={<Layout />}>
         <Route path='home' element={<Stats />} />
+        <Route path='projects' element={<Projects />} />
         <Route path='testCases' element={<TestCases />} action={testCasesAction} />
         <Route path='administration' element={<Administration />} action={emailAction} />
       </Route>
