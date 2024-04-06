@@ -23,7 +23,7 @@ export async function action({ request }) {
         const data = await res.json();
         return data;
     } catch (error) {
-        return error;
+        return error.message;
     }
 }
 

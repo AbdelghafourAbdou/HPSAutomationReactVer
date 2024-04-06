@@ -28,7 +28,7 @@ export async function action({ request }) {
 
 export default function WebServices() {
     const actionData = useActionData();
-    console.log(actionData);
+    const data = actionData?.content || [];
     const navigate = useNavigation();
     const status = navigate.state;
 
@@ -37,7 +37,7 @@ export default function WebServices() {
             <div className='titleContainer'>
                 Web Services
             </div>
-            <Form method='post' className='testCaseFormContainer' replace>
+            <Form method='post' className='webServicesFormContainer' replace>
                 <div className='fieldContainer'>
                     <label htmlFor='projectSelection'>
                         Project:
@@ -62,6 +62,27 @@ export default function WebServices() {
                 </div>
                 <button disabled={status === 'submitting'}>{status === 'submitting' ? 'Searching...' : 'Search'}</button>
             </Form>
+            {actionData &&
+                <table>
+                    <thead>
+                        <tr key="header">
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Project Name</th>
+                            <th>WS Version</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map(row =>
+                            <tr key={`data row ${row.id}`}>
+                                <td>{row.id}</td>
+                                <td>{row.name}</td>
+                                <td>{row.project.name}</td>
+                                <td>{row.version}</td>
+                            </tr>)}
+                    </tbody>
+                </table>
+            }
         </>
     )
 }
