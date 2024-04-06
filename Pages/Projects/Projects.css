@@ -2,11 +2,20 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
+    gap: 1em;
+    height: 68vh;
 }
 
 .projectContainer {
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
+
+    height: 20vh;
+    background-color: #142847;
+    border-radius: 0.5em;
+    padding: 0 0.5em;
 }
 
 .bankContainer {
@@ -16,5 +25,16 @@
 }
 
 .bankButtonsContainer {
-    
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+}
+
+.bankButtonsContainer button {
+    background-color: #155c81;
+}
+
+.bankButtonsContainer button:hover {
+    background-color: #dfe3e5;
+    color: #032233;
 }

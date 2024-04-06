@@ -65,10 +65,6 @@
     margin-left: 0.4em;
 }
 
-.editButton {
-    background-color: #17a2b8;
-}
-
 .emailConfig {
     display: flex;
     flex-direction: column;
