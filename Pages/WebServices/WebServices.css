@@ -6,11 +6,10 @@
     margin-left: 1em;
 }
 
-table {
-    width: 77vw;
-    margin: 10px auto;
-
-    border: 2px solid rgb(140 140 140);
-    border-collapse: collapse;
+.pagingControl {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25em;
 }
-

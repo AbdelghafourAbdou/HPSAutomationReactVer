@@ -24,6 +24,7 @@ a {
   color: #34ca98;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #34ca98b7;
 }
@@ -46,12 +47,37 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #155c81;
 }
+
 .editButton {
   background-color: #17a2b8 !important;
 }
+
+
+table {
+  width: 77vw;
+  margin: 10px auto;
+
+  border: 2px solid rgb(140 140 140) !important;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 2px solid rgb(140 140 140) !important;
+  padding: 0.75em;
+  text-align: left;
+}
+
+th {
+  font-size: 1.15em;
+  background-color: rgb(20, 40, 71);
+  font-weight: bolder;
+}
+
 /* button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -62,15 +88,19 @@ button:focus-visible {
     color: #213547;
     background-color: #eeecec;
   }
+
   a {
     color: #646cff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #1a1a1a;
   }
+
   button:hover {
     border-color: #646cff;
   }

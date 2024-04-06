@@ -1,5 +1,5 @@
-import { } from 'react';
-import { Form, useActionData, useNavigation } from 'react-router-dom';
+import { useRef } from 'react';
+import { useSearchParams, useFetcher } from 'react-router-dom';
 import './WebServices.css';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -9,11 +9,16 @@ export async function action({ request }) {
     const webService = formData.get('webService');
     const wsVersion = formData.get('wsVersion');
 
+    const requestURL = new URL(request.url).toString();
+    const questionMark = requestURL.indexOf('page');
+    const extractedInfo = requestURL.slice(questionMark+5);
+    const pageNumber = isNaN(extractedInfo) ? 0 : extractedInfo;
+
     const req = { project, webService, wsVersion };
     try {
         const headers = new Headers({ 'Content-Type': 'application/json' });
-        const res = await fetch('http://localhost:8088/pwcAutomationTest/searchWebServices?page=0&size=6',
-            { method: 'POST', headers, body: JSON.stringify(req) });
+        const res = await fetch(`http://localhost:8088/pwcAutomationTest/searchWebServices?page=${pageNumber}&size=6`,
+            { method: request.method, headers, body: JSON.stringify(req) });
 
         if (!res.ok) {
             throw new Error;
@@ -27,17 +32,32 @@ export async function action({ request }) {
 }
 
 export default function WebServices() {
-    const actionData = useActionData();
+    const formRef = useRef();
+    const fetcher = useFetcher();
+    const [, setSearchParams] = useSearchParams();
+    const actionData = fetcher.data;
     const data = actionData?.content || [];
-    const navigate = useNavigation();
-    const status = navigate.state;
+    const pageNumber = Number(actionData?.pageable.pageNumber);
+    const totalPages = actionData?.totalPages || null;
+    const status = fetcher.state;
+
+    function handleArrowClick(direction) {
+        setSearchParams(prev => {
+            let search = new URLSearchParams(prev);
+            let newPageNumber = pageNumber === 0 && Number(direction) === -1 ? pageNumber : pageNumber + Number(direction);
+            search.set('page', newPageNumber);
+            return search;
+        });
+        const formData = new FormData(formRef.current);
+        fetcher.submit(formData, { method: 'POST' });
+    }
 
     return (
         <>
             <div className='titleContainer'>
                 Web Services
             </div>
-            <Form method='post' className='webServicesFormContainer' replace>
+            <fetcher.Form ref={formRef} method='POST' className='webServicesFormContainer' action='/webServices' replace>
                 <div className='fieldContainer'>
                     <label htmlFor='projectSelection'>
                         Project:
@@ -49,39 +69,46 @@ export default function WebServices() {
                     </select>
                 </div>
                 <div className='fieldContainer'>
-                    <label>
+                    <label htmlFor='webService'>
                         Web Service:
                     </label>
-                    <input type="text" name='webService' placeholder='Enter Web Service' />
+                    <input id='webService' type="text" name='webService' placeholder='Enter Web Service' />
                 </div>
                 <div className='fieldContainer'>
-                    <label>
+                    <label htmlFor='wsVersion'>
                         Web Service Version:
                     </label>
-                    <input type="text" name='wsVersion' placeholder='Enter Version' />
+                    <input id='wsVersion' type="text" name='wsVersion' placeholder='Enter Version' />
                 </div>
                 <button disabled={status === 'submitting'}>{status === 'submitting' ? 'Searching...' : 'Search'}</button>
-            </Form>
+            </fetcher.Form>
             {actionData &&
-                <table>
-                    <thead>
-                        <tr key="header">
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Project Name</th>
-                            <th>WS Version</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map(row =>
-                            <tr key={`data row ${row.id}`}>
-                                <td>{row.id}</td>
-                                <td>{row.name}</td>
-                                <td>{row.project.name}</td>
-                                <td>{row.version}</td>
-                            </tr>)}
-                    </tbody>
-                </table>
+                <>
+                    <table className=''>
+                        <thead>
+                            <tr key="header">
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Project Name</th>
+                                <th>WS Version</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map(row =>
+                                <tr key={`data row ${row.id}`}>
+                                    <td>{row.id}</td>
+                                    <td>{row.name}</td>
+                                    <td>{row.project.name}</td>
+                                    <td>{row.version}</td>
+                                </tr>)}
+                        </tbody>
+                    </table>
+                    <div className='pagingControl'>
+                        {totalPages && <button onClick={() => handleArrowClick(-1)}>&larr;</button>}
+                        {pageNumber + 1}{totalPages ? ` / ${totalPages}` : ''}
+                        {totalPages && <button onClick={() => handleArrowClick(1)}>&rarr;</button>}
+                    </div>
+                </>
             }
         </>
     )
