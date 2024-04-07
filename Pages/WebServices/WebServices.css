@@ -13,3 +13,7 @@
     align-items: center;
     gap: 0.25em;
 }
+
+.reloadIcon{
+    filter: invert(84%) sepia(6%) saturate(128%) hue-rotate(175deg) brightness(107%) contrast(94%);;
+}

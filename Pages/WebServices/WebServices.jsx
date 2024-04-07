@@ -1,5 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useSearchParams, useFetcher } from 'react-router-dom';
+import Toast from '../../Components/ReUsable Library/Toast/Toast';
+import reload from '/reload.svg';
 import './WebServices.css';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -11,8 +13,8 @@ export async function action({ request }) {
 
     const requestURL = new URL(request.url).toString();
     const questionMark = requestURL.indexOf('page');
-    const extractedInfo = requestURL.slice(questionMark+5);
-    const pageNumber = isNaN(extractedInfo) ? 0 : extractedInfo;
+    const extractedInfo = requestURL.slice(questionMark + 5);
+    let pageNumber = isNaN(extractedInfo) ? 0 : extractedInfo;
 
     const req = { project, webService, wsVersion };
     try {
@@ -32,6 +34,7 @@ export async function action({ request }) {
 }
 
 export default function WebServices() {
+    const [successID, setSuccessID] = useState(0);
     const formRef = useRef();
     const fetcher = useFetcher();
     const [, setSearchParams] = useSearchParams();
@@ -41,10 +44,18 @@ export default function WebServices() {
     const totalPages = actionData?.totalPages || null;
     const status = fetcher.state;
 
+    async function handleReload(id) {
+        const res = await fetch(`http://localhost:8088/pwcAutomationTest/reloadWebService/${id}`);
+        const data = await res.json();
+        data ? setSuccessID(id) : null;
+    }
+
     function handleArrowClick(direction) {
         setSearchParams(prev => {
             let search = new URLSearchParams(prev);
-            let newPageNumber = pageNumber === 0 && Number(direction) === -1 ? pageNumber : pageNumber + Number(direction);
+            let newPageNumber = pageNumber === 0 && Number(direction) === -1 ? pageNumber
+                : pageNumber === (Number(totalPages) - 1) && Number(direction) === 1 ? pageNumber
+                    : pageNumber + Number(direction);
             search.set('page', newPageNumber);
             return search;
         });
@@ -91,6 +102,7 @@ export default function WebServices() {
                                 <th>Name</th>
                                 <th>Project Name</th>
                                 <th>WS Version</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,7 +112,18 @@ export default function WebServices() {
                                     <td>{row.name}</td>
                                     <td>{row.project.name}</td>
                                     <td>{row.version}</td>
-                                </tr>)}
+                                    <td>
+                                        <button onClick={() => handleReload(row.id)} >
+                                            <img src={reload} alt="reload icon" className='reloadIcon' />
+                                        </button>
+                                    </td>
+                                    {successID === row.id &&
+                                        <Toast event='success' delay=''>
+                                            <h4>Success</h4>
+                                            <p>Reload Success for Web Service {row.id}</p>
+                                        </Toast>}
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                     <div className='pagingControl'>

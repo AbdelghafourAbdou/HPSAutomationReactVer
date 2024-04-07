@@ -72,6 +72,10 @@ td {
   text-align: left;
 }
 
+td:last-of-type {
+  text-align: center !important;
+}
+
 th {
   font-size: 1.15em;
   background-color: rgb(20, 40, 71);
