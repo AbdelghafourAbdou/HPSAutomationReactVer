@@ -1,13 +1,15 @@
-export default function EnvConfig() {
+/* eslint-disable react/prop-types */
+export default function EnvConfig({ dbConfig, jbossConfig }) {
+
     return (
         <div className='environmentConfig'>
             <div className='config'>
                 <h1 className='configTitle'>Database Configuration</h1>
-                <p>Local DATABASE</p>
-                <p>127.0.0.1</p>
-                <p>1521</p>
-                <p>pcard</p>
-                <p>POWERCARD</p>
+                <p>{dbConfig.name}</p>
+                <p>{dbConfig.ipAddress}</p>
+                <p>{dbConfig.port}</p>
+                <p>{dbConfig.sid}</p>
+                <p>{dbConfig.username}</p>
                 <div className='configButtons'>
                     <button>Test</button>
                     <button>Reconnect</button>
@@ -16,9 +18,9 @@ export default function EnvConfig() {
             </div>
             <div className='config'>
                 <h1 className='configTitle'>Server Configuration</h1>
-                <p>Local JBOSS</p>
-                <p>127.0.0.1</p>
-                <p>8080</p>
+                <p>{jbossConfig.name}</p>
+                <p>{jbossConfig.ipAddress}</p>
+                <p>{jbossConfig.port}</p>
                 <div className='configButtons'>
                     <button>Test</button>
                     <button className='editButton'>Edit</button>
@@ -26,9 +28,9 @@ export default function EnvConfig() {
             </div>
             <div className='config'>
                 <h1 className='configTitle'>UNIX Configuration</h1>
-                <p>Local JBOSS</p>
-                <p>127.0.0.1</p>
-                <p>8080</p>
+                <p>{jbossConfig.name}</p>
+                <p>{jbossConfig.ipAddress}</p>
+                <p>{jbossConfig.port}</p>
                 <div className='configButtons'>
                     <button>Test</button>
                     <button className='editButton'>Edit</button>

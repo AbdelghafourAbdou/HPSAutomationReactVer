@@ -1,0 +1,33 @@
+.notFound{
+    max-height: 70vh;
+    max-width: auto;
+    margin: 0 auto;
+}
+
+.pathToHome {
+    position: relative;
+    top: -10%;
+    border-radius: 1em;
+}
+
+.errorHomeLink {
+    color: #015de9;
+    position: absolute;
+    top: 75%;
+}
+
+.errorHomeLink button {
+    margin: 0.75em;
+}
+
+.errorHomeLink:hover{
+    color: #0148b4;
+}
+
+.errorInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-size: 1.5em;
+}

@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { useSearchParams, useFetcher } from 'react-router-dom';
+import { useRef, useState, useEffect } from 'react';
+import { useSearchParams, useFetcher, json } from 'react-router-dom';
 import Toast from '../../Components/ReUsable Library/Toast/Toast';
 import reload from '/reload.svg';
 import './WebServices.css';
@@ -17,37 +17,53 @@ export async function action({ request }) {
     let pageNumber = isNaN(extractedInfo) ? 0 : extractedInfo;
 
     const req = { project, webService, wsVersion };
+
+    const headers = new Headers({ 'Content-Type': 'application/json' });
     try {
-        const headers = new Headers({ 'Content-Type': 'application/json' });
         const res = await fetch(`http://localhost:8088/pwcAutomationTest/searchWebServices?page=${pageNumber}&size=6`,
             { method: request.method, headers, body: JSON.stringify(req) });
 
         if (!res.ok) {
-            throw new Error;
+            throw json({ message: res.statusText }, { status: res.status });
         }
 
         const data = await res.json();
         return data;
     } catch (error) {
-        return error;
+        throw json({ message: 'Failed to Fetch, Server is Down.'}, { status: 503, statusText: 'Service Unavailable' });
     }
 }
 
 export default function WebServices() {
     const [successID, setSuccessID] = useState(0);
+    const [failureID, setFailureID] = useState(0);
     const formRef = useRef();
     const fetcher = useFetcher();
     const [, setSearchParams] = useSearchParams();
     const actionData = fetcher.data;
     const data = actionData?.content || [];
-    const pageNumber = Number(actionData?.pageable.pageNumber);
+    const pageNumber = Number(actionData?.pageable?.pageNumber) || 0;
     const totalPages = actionData?.totalPages || null;
     const status = fetcher.state;
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const toast = document.getElementsByClassName('toast-container');
+            if (toast.length == 0) {
+                setFailureID(0);
+                setSuccessID(0);
+            }
+        }, 500);
+        return () => clearInterval(intervalId);
+    }, []);
+
     async function handleReload(id) {
-        const res = await fetch(`http://localhost:8088/pwcAutomationTest/reloadWebService/${id}`);
-        const data = await res.json();
-        data ? setSuccessID(id) : null;
+        try {
+            await fetch(`http://localhost:8088/pwcAutomationTest/reloadWebService/${id}`);
+            setSuccessID(id);
+        } catch (error) {
+            setFailureID(id);
+        }
     }
 
     function handleArrowClick(direction) {
@@ -121,7 +137,14 @@ export default function WebServices() {
                                         <Toast event='success' delay=''>
                                             <h4>Success</h4>
                                             <p>Reload Success for Web Service {row.id}</p>
-                                        </Toast>}
+                                        </Toast>
+                                    }
+                                    {failureID === row.id &&
+                                        <Toast event='error' delay=''>
+                                            <h4>Failure</h4>
+                                            <p>Reload Failure for Web Service {row.id}</p>
+                                        </Toast>
+                                    }
                                 </tr>
                             )}
                         </tbody>

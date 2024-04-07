@@ -70,6 +70,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 5px;
+    margin-top: 0.5em;
 }
 
 .emailConfig input, select, option {
@@ -80,4 +81,10 @@
 .emailConfig input {
     min-width: 300px;
     min-height: 30px;
+}
+
+.emailButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
 }
