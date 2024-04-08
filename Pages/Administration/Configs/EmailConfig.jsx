@@ -2,6 +2,8 @@ import { useRef, useEffect, useState } from "react";
 import { useFetcher } from "react-router-dom";
 import Toast from "../../../Components/ReUsable Library/Toast/Toast";
 
+const BASEPATH = 'http://localhost:8088/pwcAutomationTest';
+
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }) {
     const formData = await request.formData();
@@ -15,7 +17,7 @@ export async function action({ request }) {
     if (intent === 'save') {
         const message = { 'id': null, name, email, type, sentIndicator };
         try {
-            const res = await fetch('http://localhost:8088/pwcAutomationTest/newReportRecipient',
+            const res = await fetch(`${BASEPATH}/newReportRecipient`,
                 { method: 'POST', headers, body: JSON.stringify(message) });
 
             if (!res.ok) {
@@ -34,7 +36,7 @@ export async function action({ request }) {
     } else if (intent === 'search') {
         const message = { 'id': null, name, email, type };
         try {
-            const res = await fetch('http://localhost:8088/pwcAutomationTest/searchReportRecipient',
+            const res = await fetch(`${BASEPATH}/searchReportRecipient`,
                 { method: 'POST', headers, body: JSON.stringify(message) });
 
             if (!res.ok) {
@@ -48,7 +50,25 @@ export async function action({ request }) {
             const data = await res.json();
             return data;
         } catch (error) {
-            console.log('initialy caught error: ' + error.name);
+            return error;
+        }
+    } else if (intent === 'delete') {
+        const id = formData.get('id');
+        try {
+            const res = await fetch(`${BASEPATH}/deleteReportRecipient/${id}`);
+
+            if (!res.ok) {
+                throw {
+                    message: `Error Deleting Recipient with ID: ${id}`,
+                    errorStatus: res.status,
+                    errorStatusText: res.statusText,
+                }
+            }
+
+            const data = await res.json();
+            delete data.id;
+            return data;
+        } catch (error) {
             return error;
         }
     }
@@ -102,8 +122,17 @@ export default function EmailConfig() {
 
     }
 
-    function handleDelete() {
-
+    function handleDelete(id) {
+        const deleteFormData = new FormData();
+        deleteFormData.append('id', id);
+        deleteFormData.append('intent', 'delete');
+        fetcher.submit(deleteFormData, { method: 'POST' });
+        const refreshFormData = new FormData();
+        refreshFormData.append('name', "");
+        refreshFormData.append('email', "");
+        refreshFormData.append('type', "");
+        refreshFormData.append('intent', 'search');
+        setTimeout(() => fetcher.submit(refreshFormData, { method: 'POST' }), 500);
     }
 
     return (
@@ -176,7 +205,7 @@ export default function EmailConfig() {
                                 <td>{row.type}</td>
                                 <td>{row.sentIndicator ? 'Yes' : 'No'}</td>
                                 <td><button onClick={handleEdit}>Edit</button></td>
-                                <td><button onClick={handleDelete}>Delete</button></td>
+                                <td><button onClick={() => handleDelete(row.id)}>Delete</button></td>
                             </tr>
                         )}
                     </tbody>
