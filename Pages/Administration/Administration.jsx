@@ -9,10 +9,10 @@ export async function loader() {
     try {
         const res1 = await fetch('http://localhost:8088/pwcAutomationTest/DataBase/getConfig');
         const res2 = await fetch('http://localhost:8088/pwcAutomationTest/ServerJboss/getConfig');
-        const dbConfig = await res1.json();
-        const JbossConfig = await res2.json();
 
-        return [dbConfig, JbossConfig];
+        const dbConfig = await res1.json();
+        const jbossConfig = await res2.json();
+        return [dbConfig, jbossConfig];
     } catch (error) {
         if (error.name !== 'TypeError') {
             throw new Error(error);
