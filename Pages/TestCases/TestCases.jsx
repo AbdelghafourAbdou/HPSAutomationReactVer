@@ -29,7 +29,7 @@ export async function action({ request }) {
 
 export default function TestCases() {
     const actionData = useActionData();
-    console.log(actionData);
+    console.log(actionData)
     const navigate = useNavigation();
     const status = navigate.state;
 
@@ -80,6 +80,46 @@ export default function TestCases() {
                 </div>
                 <button disabled={status === 'submitting'}>{status === 'submitting' ? 'Searching...' : 'Search'}</button>
             </Form>
+            {actionData &&
+                <>
+                    <table>
+                        <thead>
+                            <tr key="header">
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>WS Name</th>
+                                <th>Project Name</th>
+                                <th>PWC Version</th>
+                                <th>WS Version</th>
+                                <th>Run Date</th>
+                                <th>Result</th>
+                                <th>Type</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {actionData.content.map(row =>
+                                <tr key={`data row ${row.id}`}>
+                                    <td>{row.id}</td>
+                                    <td>{row.name}</td>
+                                    <td>{row.webServiceName}</td>
+                                    <td>{row.projectName}</td>
+                                    <td>{row.pwcVersion}</td>
+                                    <td>{row.wsVersion}</td>
+                                    <td>{row.runDate}</td>
+                                    <td>{row.testCaseResult}</td>
+                                    <td>{row.type}</td>
+                                    <td>
+                                        <button >
+                                            chi7aja
+                                        </button>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </>
+            }
         </>
     )
 }

@@ -46,6 +46,7 @@ export default function WebServices() {
     const totalPages = actionData?.totalPages || null;
     const status = fetcher.state;
 
+    // refresh toasts
     useEffect(() => {
         const intervalId = setInterval(() => {
             const toast = document.getElementsByClassName('toast-container');
@@ -57,6 +58,7 @@ export default function WebServices() {
         return () => clearInterval(intervalId);
     }, []);
 
+    // reload button
     async function handleReload(id) {
         try {
             await fetch(`http://localhost:8088/pwcAutomationTest/reloadWebService/${id}`);
@@ -66,6 +68,7 @@ export default function WebServices() {
         }
     }
 
+    // handle navigation
     function handleArrowClick(direction) {
         setSearchParams(prev => {
             let search = new URLSearchParams(prev);
@@ -111,7 +114,7 @@ export default function WebServices() {
             </fetcher.Form>
             {actionData &&
                 <>
-                    <table className=''>
+                    <table >
                         <thead>
                             <tr key="header">
                                 <th>#</th>
