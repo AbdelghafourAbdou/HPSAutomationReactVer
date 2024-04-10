@@ -82,7 +82,7 @@ export default function TestCases() {
             </Form>
             {actionData &&
                 <>
-                    <table>
+                    <table className='testCasesTable'>
                         <thead>
                             <tr key="header">
                                 <th>#</th>

@@ -1,4 +1,6 @@
 .navContainer {
+    position: sticky;
+    top: 0;
     display: flex;
     flex-direction: column;
     gap: 0.5em;
@@ -8,6 +10,7 @@
     padding: 10px;
 
     min-width: 180px;
+    min-height: 600px;
     max-height: 94vh;
 }
 

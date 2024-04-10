@@ -17,3 +17,8 @@
     flex-direction: column;
     align-items: flex-start;
 }
+
+.testCasesTable td{
+    max-width:100%;
+    white-space:nowrap;
+}

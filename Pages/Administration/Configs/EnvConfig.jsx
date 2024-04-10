@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Toast from "../../../Components/ReUsable Library/Toast/Toast";
+import { toProper } from "../../../Utils/Utils";
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest';
 
@@ -78,7 +79,7 @@ export default function EnvConfig({ dbConfig, jbossConfig }) {
             {
                 displayMessage[0] !== false  &&
                 <Toast event={displayMessage[0]}>
-                    <p>{displayMessage[0]}</p>
+                    <p>{toProper(displayMessage[0])}</p>
                     <p>{displayMessage[1]}</p>
                 </Toast >
             }

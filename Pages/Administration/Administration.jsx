@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import EnvConfig from './Configs/EnvConfig';
 import EmailConfig from './Configs/EmailConfig';
+import { toProper } from '../../Utils/Utils';
 import './Administration.css';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -28,13 +29,6 @@ export default function Administration() {
         scheduler: false,
         email: false,
     });
-
-    const toProper = (title) => {
-        let tempArr = title.split('');
-        let capitalFirstLetter = tempArr[0].toUpperCase();
-        let newTitle = tempArr.toSpliced(0, 1, capitalFirstLetter).join('');
-        return newTitle;
-    }
 
     function handleConfig(key) {
         let newActive = {

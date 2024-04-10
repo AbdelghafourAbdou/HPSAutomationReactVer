@@ -264,6 +264,7 @@ export default function EmailConfig() {
                     </tbody>
                 </table>
             }
+            {editForm && <div className="overlay"></div>}
             <fetcher.Form ref={updateFormRef} style={{ visibility: editForm ? 'visible' : 'hidden' }}
                 id="editForm" className='editForm' method="post" replace>
                 <h2>Edit Report Recipient</h2>
