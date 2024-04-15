@@ -35,3 +35,15 @@
 .lightColor {
     filter: invert(84%) sepia(6%) saturate(128%) hue-rotate(175deg) brightness(107%) contrast(94%);;
 }
+
+.loaderSpinner {
+    position: fixed;
+    top: 32%;
+    left: 45%;
+    z-index: 2;
+}
+
+.loaderSpinner > svg {
+    min-height: 300px;
+    min-width: 380px;
+}

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
-import info from '/public/infoCircle.svg';
+import info from '/infoCircle.svg';
 import './ViewTestCase.css'
 
 export default function ViewTestCase({ setViewOpen, row }) {
@@ -8,7 +8,7 @@ export default function ViewTestCase({ setViewOpen, row }) {
 
     // close details page
     function handleCloseDetails() {
-        setViewOpen(false);
+        setViewOpen([false, null]);
     }
 
     // set which info to display depending on the row data

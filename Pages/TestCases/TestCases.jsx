@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useFetcher, useSearchParams, json } from 'react-router-dom';
+import { InfinitySpin } from 'react-loader-spinner';
 import ViewTestCase from './ViewTestCase';
 import eye from '/eye.svg';
 import play from '/play.svg';
@@ -53,6 +54,7 @@ export default function TestCases() {
     const [type, setType] = useState(Array(size).fill('REST'));
     const [runTime, setRunTime] = useState(Array(size).fill(''));
     const [viewOpen, setViewOpen] = useState([false, null]);
+    const [loaderVisibility, setLoaderVisibility] = useState(false);
 
     // swap from REST to SOAP and vice-versa
     function handleTypeChange(row) {
@@ -81,14 +83,18 @@ export default function TestCases() {
     }
 
     function handleViewTestCase(row) {
-        let moddedType = type[(row.id-1) % 6];
+        let moddedType = type[(row.id - 1) % 6];
         let moddedRunTime = runTime[(row.id - 1) % size] && runTime[(row.id - 1) % 6].toLocaleString();
-        let moddedRow = {...row, moddedType, moddedRunTime};
+        let moddedRow = { ...row, moddedType, moddedRunTime };
         setViewOpen([true, moddedRow]);
     }
 
-    function handleRunTestCase(row) {
-
+    async function handleRunTestCase(row) {
+        setLoaderVisibility(true);
+        const res = await fetch(`${BASE_URL}/testCaseRunner/${row.id}/${type[(row.id - 1) % size]}`);
+        const data = await res.json();
+        setLoaderVisibility(false);
+        data?.status !== 500 ? setViewOpen([true, data]) : null;
     }
 
     // converts the db time into more readable format
@@ -100,7 +106,6 @@ export default function TestCases() {
             setRunTime(newArr);
         }
     }, [data]);
-
 
     return (
         <>
@@ -194,7 +199,15 @@ export default function TestCases() {
                             )}
                         </tbody>
                     </table>
-                    {viewOpen[0] && createPortal(<ViewTestCase setViewOpen={setViewOpen} row={viewOpen[1]}/>, document.getElementById('testCasesTable'))}
+                    {viewOpen[0] && createPortal(<ViewTestCase setViewOpen={setViewOpen} row={viewOpen[1]} />, document.getElementById('testCasesTable'))}
+                    {loaderVisibility &&
+                        <>
+                            <div className='overlay'></div>
+                            <div className='loaderSpinner'>
+                                <InfinitySpin width="200" color="#3e7edf" />
+                            </div>
+                        </>
+                    }
                     <div className='pagingControl'>
                         {totalPages && <button onClick={() => handleArrowClick(-1)}>&larr;</button>}
                         {pageNumber + 1}{totalPages ? ` / ${totalPages}` : ''}
