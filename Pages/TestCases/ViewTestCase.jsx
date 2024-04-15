@@ -32,15 +32,15 @@ export default function ViewTestCase({ setViewOpen, row }) {
     // set which info to display depending on the row data
     useEffect(() => {
         //console.log(row);
-        let info = { "providerLogin": "soufiane", "providerPassword": "$2a$10$8ry3EGRY85RwLhHz2AmvI.UNYe5fzGaodCRnvrTQTRJ7RFjfkLdna", "requestInfo": { "requestDate": "2024-04-15T23:27:00", "requestUID": "0635fc22-43e4-4798-b8d5-ec507576a2b9", "userID": "soufiane" }, "userLanguage": "en_US" };
-        console.log(turnInfoPrintable(info));
+        // let info = '{ "providerLogin": "soufiane", "providerPassword": "$2a$10$8ry3EGRY85RwLhHz2AmvI.UNYe5fzGaodCRnvrTQTRJ7RFjfkLdna", "requestInfo": { "requestDate": "2024-04-15T23:27:00", "requestUID": "0635fc22-43e4-4798-b8d5-ec507576a2b9", "userID": "soufiane" }, "userLanguage": "en_US" }';
+        // console.log(turnInfoPrintable(JSON.parse(info)));
         if (row.testCaseResult === 'READY') {
             setDisplayOption([0, null]);
         } else if (row.testCaseResult === 'PASSED') {
-            setDisplayOption([1, { 
-                request: turnInfoPrintable(row.request),
-                response: turnInfoPrintable(row.response),
-                expectedResponse: turnInfoPrintable(row.expectedResponse),
+            setDisplayOption([1, {
+                request: turnInfoPrintable(JSON.parse(row.request)),
+                response: turnInfoPrintable(JSON.parse(row.response)),
+                expectedResponse: turnInfoPrintable(JSON.parse(row.expectedResponse)),
             }]);
         } else if (row.testCaseResult === 'FAILED') {
             setDisplayOption([-1, null]);
@@ -91,17 +91,23 @@ export default function ViewTestCase({ setViewOpen, row }) {
                         <div>
                             <h1>REQUEST DETAILS</h1>
                             <h4>The Request Content</h4>
-                            {displayOption[1]['request']}
+                            <pre>
+                                {displayOption[1]['request']}
+                            </pre>
                         </div>
                         <div>
                             <h1>RESPONSE DETAILS</h1>
                             <h4>The Response Content</h4>
-                            {displayOption[1]['response']}
+                            <pre>
+                                {displayOption[1]['response']}
+                            </pre>
                         </div>
                         <div>
                             <h1>EXPECTED RESPONSE</h1>
                             <h4>The Response Content</h4>
-                            {displayOption[1]['expectedResponse']}
+                            <pre>
+                                {displayOption[1]['expectedResponse']}
+                            </pre>
                         </div>
                     </div>}
                 {(displayOption[0] === -1) &&
