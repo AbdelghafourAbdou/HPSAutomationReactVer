@@ -4,22 +4,41 @@ import info from '/infoCircle.svg';
 import './ViewTestCase.css'
 
 export default function ViewTestCase({ setViewOpen, row }) {
-    const [displayOption, setDisplayOption] = useState(null);
+    const [displayOption, setDisplayOption] = useState([null, null]);
 
     // close details page
     function handleCloseDetails() {
         setViewOpen([false, null]);
     }
 
+    function turnInfoPrintable(info) {
+        let result = '{\n';
+        for (const [key, value] of Object.entries(info)) {
+            if (typeof value === 'object') {
+                result += ` ${key}: {\n`;
+                for (const [innerKey, innerValue] of Object.entries(value)) {
+                    result += `   ${innerKey}: ${innerValue},\n`;
+                }
+                result += '},\n';
+                continue;
+            }
+            result += ` ${key}: ${value},\n`;
+        }
+        result += '}';
+        return result;
+    }
+
     // set which info to display depending on the row data
     useEffect(() => {
         //console.log(row);
+        let info = { "providerLogin": "soufiane", "providerPassword": "$2a$10$8ry3EGRY85RwLhHz2AmvI.UNYe5fzGaodCRnvrTQTRJ7RFjfkLdna", "requestInfo": { "requestDate": "2024-04-15T23:27:00", "requestUID": "0635fc22-43e4-4798-b8d5-ec507576a2b9", "userID": "soufiane" }, "userLanguage": "en_US" };
+        console.log(turnInfoPrintable(info));
         if (row.testCaseResult === 'READY') {
-            setDisplayOption(0);
-        } else if (row.testCaseResult === 'PASSED')  {
-            setDisplayOption(1);
+            setDisplayOption([0, null]);
+        } else if (row.testCaseResult === 'PASSED') {
+            setDisplayOption([1,]);
         } else if (row.testCaseResult === 'FAILED') {
-            setDisplayOption(-1);
+            setDisplayOption([-1, null]);
         }
     }, [row]);
 
@@ -57,12 +76,12 @@ export default function ViewTestCase({ setViewOpen, row }) {
                         </tbody>
                     </table>
                 </div>
-                {(displayOption === 0) &&
+                {(displayOption[0] === 0) &&
                     <div className='testCaseDetailsInfoREADY'>
                         <img src={info} alt="Information Circle" className='lightColor' />
                         <h1>No Information is Being Displayed. Please Execute your Test Case.</h1>
                     </div>}
-                {(displayOption === 1) &&
+                {(displayOption[0] === 1) &&
                     <div className='testCaseDetailsInfoPASSED'>
                         <div>
                             <h1>REQUEST DETAILS</h1>
@@ -80,7 +99,7 @@ export default function ViewTestCase({ setViewOpen, row }) {
                             {row.expectedResponse}
                         </div>
                     </div>}
-                {(displayOption === -1) &&
+                {(displayOption[0] === -1) &&
                     <div className='testCaseDetailsInfoFAILED'>
                         <img src={info} alt="Information Circle" className='lightColor' />
                         <h1>No Information is Being Displayed. Please Execute your Test Case.</h1>
