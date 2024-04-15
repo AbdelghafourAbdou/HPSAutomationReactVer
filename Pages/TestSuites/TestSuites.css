@@ -1,0 +1,27 @@
+.testSuiteFormContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 0.45em;
+    margin-left: 1em;
+}
+
+.centeringDiv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.testSuitesInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25em;
+    width: 95%;
+    height: 90px;
+    padding: 10px 10px;
+    margin-bottom: 10px;
+    border-radius: 0.25em;
+    background-color: #295393;
+}

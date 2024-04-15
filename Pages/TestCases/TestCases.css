@@ -18,7 +18,20 @@
     align-items: flex-start;
 }
 
-.testCasesTable td{
+/* .testCasesTable td{
     max-width:100%;
     white-space:nowrap;
+} */
+
+.testCaseButtons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: inherit;
+    gap: 0.15em;
+}
+
+.lightColor {
+    filter: invert(84%) sepia(6%) saturate(128%) hue-rotate(175deg) brightness(107%) contrast(94%);;
 }

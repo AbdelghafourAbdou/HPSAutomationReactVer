@@ -56,8 +56,8 @@ export default function NavBar() {
                 <button className='buttonContainer' id='1' onClick={handleClick}>
                     <i className='buttonIcon'><FaStream /></i>
                     API Stream
-                    <Link open={openTab}>{[1, ['/home', '/projects', '/webServices', '/testCases', '/home'], ['Statistics',
-                        'Projects', 'Web Services', 'Test Cases', 'Test Suits']]}</Link>
+                    <Link open={openTab}>{[1, ['/home', '/projects', '/webServices', '/testCases', '/testSuites'], ['Statistics',
+                        'Projects', 'Web Services', 'Test Cases', 'Test Suites']]}</Link>
                 </button>
                 <button className='buttonContainer' id='2' onClick={handleClick}>
                     <i className='buttonIcon'><FaStream /></i>

@@ -70,6 +70,8 @@ td {
   border: 2px solid rgb(140 140 140) !important;
   padding: 0.75em;
   text-align: left;
+  max-width: 300px;
+  word-wrap: break-word;
 }
 
 td:last-of-type {
