@@ -46,7 +46,7 @@
     background-color: #295393 !important;
 }
 
-.testCaseDetailsInfo {
+.testCaseDetailsInfoREADY {
     display: flex;
     flex-direction: row;
     justify-content: start;
@@ -58,4 +58,14 @@
     margin-bottom: 10px;
     border-radius: 0.25em;
     background-color: #295393 !important;
+}
+
+.testCaseDetailsInfoPASSED {
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.testCaseDetailsInfoFAILED {
+
 }

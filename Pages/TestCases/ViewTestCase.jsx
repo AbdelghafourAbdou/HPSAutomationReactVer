@@ -14,8 +14,12 @@ export default function ViewTestCase({ setViewOpen, row }) {
     // set which info to display depending on the row data
     useEffect(() => {
         //console.log(row);
-        if (row.errors.length < 1 && !row.request && !row.response && !row.expectedResponse) {
+        if (row.testCaseResult === 'READY') {
             setDisplayOption(0);
+        } else if (row.testCaseResult === 'PASSED')  {
+            setDisplayOption(1);
+        } else if (row.testCaseResult === 'FAILED') {
+            setDisplayOption(-1);
         }
     }, [row]);
 
@@ -54,11 +58,33 @@ export default function ViewTestCase({ setViewOpen, row }) {
                     </table>
                 </div>
                 {(displayOption === 0) &&
-                    <div className='testCaseDetailsInfo'>
+                    <div className='testCaseDetailsInfoREADY'>
                         <img src={info} alt="Information Circle" className='lightColor' />
                         <h1>No Information is Being Displayed. Please Execute your Test Case.</h1>
-                    </div>
-                }
+                    </div>}
+                {(displayOption === 1) &&
+                    <div className='testCaseDetailsInfoPASSED'>
+                        <div>
+                            <h1>REQUEST DETAILS</h1>
+                            <h4>The Request Content</h4>
+                            {row.request}
+                        </div>
+                        <div>
+                            <h1>RESPONSE DETAILS</h1>
+                            <h4>The Response Content</h4>
+                            {row.response}
+                        </div>
+                        <div>
+                            <h1>EXPECTED RESPONSE</h1>
+                            <h4>The Response Content</h4>
+                            {row.expectedResponse}
+                        </div>
+                    </div>}
+                {(displayOption === -1) &&
+                    <div className='testCaseDetailsInfoFAILED'>
+                        <img src={info} alt="Information Circle" className='lightColor' />
+                        <h1>No Information is Being Displayed. Please Execute your Test Case.</h1>
+                    </div>}
             </div>
         </>
     )

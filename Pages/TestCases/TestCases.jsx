@@ -94,7 +94,11 @@ export default function TestCases() {
         const res = await fetch(`${BASE_URL}/testCaseRunner/${row.id}/${type[(row.id - 1) % size]}`);
         const data = await res.json();
         setLoaderVisibility(false);
-        data?.status !== 500 ? setViewOpen([true, data]) : null;
+        const formData = new FormData(formRef.current);
+        fetcher.submit(formData, { method: 'POST' });
+        let moddedType = type[(row.id - 1) % 6];
+        let moddedRunTime = runTime[(row.id - 1) % size] && runTime[(row.id - 1) % 6].toLocaleString();
+        data?.status !== 500 ? setViewOpen([true, { ...data, moddedType, moddedRunTime }]) : null;
     }
 
     // converts the db time into more readable format
