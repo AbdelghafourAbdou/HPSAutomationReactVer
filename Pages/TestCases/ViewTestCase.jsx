@@ -11,6 +11,7 @@ export default function ViewTestCase({ setViewOpen, row }) {
         setViewOpen([false, null]);
     }
 
+    // use request/response info to create readable text for debugging
     function turnInfoPrintable(info) {
         let result = '{\n';
         for (const [key, value] of Object.entries(info)) {
@@ -36,7 +37,11 @@ export default function ViewTestCase({ setViewOpen, row }) {
         if (row.testCaseResult === 'READY') {
             setDisplayOption([0, null]);
         } else if (row.testCaseResult === 'PASSED') {
-            setDisplayOption([1,]);
+            setDisplayOption([1, { 
+                request: turnInfoPrintable(row.request),
+                response: turnInfoPrintable(row.response),
+                expectedResponse: turnInfoPrintable(row.expectedResponse),
+            }]);
         } else if (row.testCaseResult === 'FAILED') {
             setDisplayOption([-1, null]);
         }
@@ -86,17 +91,17 @@ export default function ViewTestCase({ setViewOpen, row }) {
                         <div>
                             <h1>REQUEST DETAILS</h1>
                             <h4>The Request Content</h4>
-                            {row.request}
+                            {displayOption[1]['request']}
                         </div>
                         <div>
                             <h1>RESPONSE DETAILS</h1>
                             <h4>The Response Content</h4>
-                            {row.response}
+                            {displayOption[1]['response']}
                         </div>
                         <div>
                             <h1>EXPECTED RESPONSE</h1>
                             <h4>The Response Content</h4>
-                            {row.expectedResponse}
+                            {displayOption[1]['expectedResponse']}
                         </div>
                     </div>}
                 {(displayOption[0] === -1) &&
