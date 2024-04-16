@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 import { } from 'react';
-import { MdDashboard, MdAdminPanelSettings } from "react-icons/md";
-import { FaStream } from "react-icons/fa";
 import usePersist from '../../Hooks/usePersist';
 import Link from './Link';
+import dashboardIcon from '/dashboard.svg';
+import signIcon from '/signpost.svg';
+import adminIcon from '/administration.svg';
 import './NavBar.css';
 
 export default function NavBar() {
@@ -36,7 +37,7 @@ export default function NavBar() {
             }));
         }
 
-        setOpenTab(prev => (isIdSpecified ? { ...newArray, [`isb${Number(id) + 1}Open`]: true } : prev ));
+        setOpenTab(prev => (isIdSpecified ? { ...newArray, [`isb${Number(id) + 1}Open`]: true } : prev));
     }
 
     return (
@@ -49,33 +50,33 @@ export default function NavBar() {
             </h5>
             <nav className="navbar">
                 <button className='buttonContainer' id='0' onClick={handleClick}>
-                    <i className='buttonIcon'><MdDashboard /></i>
+                    <img src={dashboardIcon} alt="dashboard icon" className='buttonIcon lightColor' />
                     Dashboard
                     <Link open={openTab}>{[0, '/home', 'Global Statistics']}</Link>
                 </button>
                 <button className='buttonContainer' id='1' onClick={handleClick}>
-                    <i className='buttonIcon'><FaStream /></i>
+                    <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
                     API Stream
                     <Link open={openTab}>{[1, ['/home', '/projects', '/webServices', '/testCases', '/testSuites'], ['Statistics',
                         'Projects', 'Web Services', 'Test Cases', 'Test Suites']]}</Link>
                 </button>
                 <button className='buttonContainer' id='2' onClick={handleClick}>
-                    <i className='buttonIcon'><FaStream /></i>
+                    <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
                     GUI Stream
                     <Link open={openTab}>{[2, '/home', 'Home']}</Link>
                 </button>
                 <button className='buttonContainer' id='3' onClick={handleClick}>
-                    <i className='buttonIcon'><FaStream /></i>
+                    <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
                     Online Stream
                     <Link open={openTab}>{[3, '/home', 'Home']}</Link>
                 </button>
                 <button className='buttonContainer' id='4' onClick={handleClick}>
-                    <i className='buttonIcon'><FaStream /></i>
+                    <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
                     Batch Stream
                     <Link open={openTab}>{[4, '/home', 'Home']}</Link>
                 </button>
                 <button className='buttonContainer' id='5' onClick={handleClick}>
-                    <i className='buttonIcon'><MdAdminPanelSettings /></i>
+                    <img src={adminIcon} alt="sign icon" className='buttonIcon lightColor' />
                     Administration
                     <Link open={openTab}>{[5, '/Administration', 'Gonfigurations']}</Link>
                 </button>

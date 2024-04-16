@@ -148,19 +148,24 @@ export default function EmailConfig() {
         return () => clearInterval(intervalId);
     }, []);
 
+    // pre fill the form with each recipient's data and open it
     function handleEdit(row) {
+        document.documentElement.classList.add('hideScrollBar');
         document.getElementById('editName').setAttribute('value', row.name);
         document.getElementById('editEmail').setAttribute('value', row.email);
         document.getElementById('editType').value = row.type;
         document.getElementById('editIndicator').value = row.sentIndicator;
         document.getElementById('idButton').value = row.id;
-        //document.getElementById('root').style.opacity = '0.5';
         setEditForm(true);
     }
+
+    // close the update form
     function cancelUpdate() {
-        document.getElementById('root').style.opacity = '1';
+        document.documentElement.classList.remove('hideScrollBar');
         setEditForm(false);
     }
+
+    // handle the submission of the update form
     function handleUpdateFormSubmission(e) {
         const updateFormData = new FormData(updateFormRef.current);
         updateFormData.append('intent', 'update');
@@ -175,6 +180,7 @@ export default function EmailConfig() {
         setEditForm(false);
     }
 
+    // handle the deletion of a recipient
     function handleDelete(id) {
         const deleteFormData = new FormData();
         deleteFormData.append('id', id);

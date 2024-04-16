@@ -9,7 +9,7 @@ export default function ViewTestCase({ setViewOpen, row }) {
     // close details page
     function handleCloseDetails() {
         setViewOpen([false, null]);
-        document.documentElement.classList.remove('hideScrollBar')
+        document.documentElement.classList.remove('hideScrollBar');
     }
 
     // use request/response info to create readable text for debugging

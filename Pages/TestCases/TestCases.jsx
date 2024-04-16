@@ -83,7 +83,7 @@ export default function TestCases() {
     }
 
     function handleViewTestCase(row) {
-        document.documentElement.classList.add('hideScrollBar')
+        document.documentElement.classList.add('hideScrollBar');
         let moddedType = type[(row.id - 1) % 6];
         let moddedRunTime = runTime[(row.id - 1) % size] && runTime[(row.id - 1) % 6].toLocaleString();
         let moddedRow = { ...row, moddedType, moddedRunTime };
