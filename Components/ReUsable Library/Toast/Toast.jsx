@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
-import { BiCheckCircle } from "react-icons/bi";
-import { VscWarning } from "react-icons/vsc";
-import { BiErrorCircle } from "react-icons/bi";
-import { IoIosInformationCircle } from "react-icons/io";
-import { TiDelete } from "react-icons/ti";
-import useDisappear from "../../../Hooks/useDisappear"
+import checkCircle from '/checkCircle.svg';
+import exclamationTriangle from '/exclamationTriangle.svg';
+import exclamationCircle from '/exclamationCircle.svg';
+import infoCircle from '/infoCircle.svg';
+import xCircle from '/xCircle.svg';
+import useDisappear from "../../../Hooks/useDisappear";
 import './Toast.css';
 
 export default function Toast({ children, className, event, delay, ...rest }) {
@@ -17,16 +17,16 @@ export default function Toast({ children, className, event, delay, ...rest }) {
     let renderedIcon;
     switch (event) {
         case 'success':
-            renderedIcon = <BiCheckCircle size='1.5em' color='#34D399' />;
+            renderedIcon = <img src={checkCircle} alt="check circle icon" className='checkCircle' />;
             break;
         case 'warning':
-            renderedIcon = <VscWarning size='1.5em' color='#FBBF24' />;
+            renderedIcon = <img src={exclamationTriangle} alt="exclamation triangle icon" className='exclamationTriangle' />;
             break;
         case 'error':
-            renderedIcon = <BiErrorCircle size='1.5em' color='#F87171' />;
+            renderedIcon = <img src={exclamationCircle} alt="exclamation circle icon" className='exclamationCircle' />
             break;
         case 'information':
-            renderedIcon = <IoIosInformationCircle size='1.5em' color='#60A5FA' />;
+            renderedIcon = <img src={infoCircle} alt="information circle icon" className='infoCircle' />;
             break;
 
         default:
@@ -48,9 +48,9 @@ export default function Toast({ children, className, event, delay, ...rest }) {
                     </div>
                 </div>
                 <button className='toastButton' onClick={disappear}>
-                    <TiDelete size='1.5em' color='#6B7280' />
+                    <img src={xCircle} alt="cross circle icon" className='xCircle' />
                 </button>
-            </div>, 
+            </div>,
             document.getElementById('root'))
     );
 }

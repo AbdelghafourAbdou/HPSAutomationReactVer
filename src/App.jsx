@@ -12,6 +12,8 @@ import Administration, { loader as administrationLoader } from '../Pages/Adminis
 import { action as emailAction } from '../Pages/Administration/Configs/EmailConfig';
 import './App.css'
 
+document.documentElement.style.setProperty('--animate-duration', '.60s');
+
 function App() {
 
   const router = createBrowserRouter(

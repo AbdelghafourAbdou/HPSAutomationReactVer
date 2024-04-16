@@ -42,7 +42,7 @@
 .buttonIcon {
     display: inline;
     margin-right: 0.25em;
-    vertical-align: text-top;
+    vertical-align: inherit;
 }
 
 

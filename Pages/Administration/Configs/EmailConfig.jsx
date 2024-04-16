@@ -167,6 +167,7 @@ export default function EmailConfig() {
 
     // handle the submission of the update form
     function handleUpdateFormSubmission(e) {
+        document.documentElement.classList.remove('hideScrollBar');
         const updateFormData = new FormData(updateFormRef.current);
         updateFormData.append('intent', 'update');
         updateFormData.append('id', e.target.value);
