@@ -83,6 +83,7 @@ export default function TestCases() {
     }
 
     function handleViewTestCase(row) {
+        document.documentElement.classList.add('hideScrollBar')
         let moddedType = type[(row.id - 1) % 6];
         let moddedRunTime = runTime[(row.id - 1) % size] && runTime[(row.id - 1) % 6].toLocaleString();
         let moddedRow = { ...row, moddedType, moddedRunTime };
@@ -112,7 +113,7 @@ export default function TestCases() {
     }, [data]);
 
     return (
-        <>
+        <div id='testCasesContainer' >
             <div className='titleContainer'>
                 <h1>Test Cases</h1>
             </div>
@@ -203,7 +204,7 @@ export default function TestCases() {
                             )}
                         </tbody>
                     </table>
-                    {viewOpen[0] && createPortal(<ViewTestCase setViewOpen={setViewOpen} row={viewOpen[1]} />, document.getElementById('testCasesTable'))}
+                    {viewOpen[0] && createPortal(<ViewTestCase setViewOpen={setViewOpen} row={viewOpen[1]} />, document.getElementById('testCasesContainer'))}
                     {loaderVisibility &&
                         <>
                             <div className='overlay'></div>
@@ -219,6 +220,6 @@ export default function TestCases() {
                     </div>
                 </>
             }
-        </>
+        </div>
     )
 }

@@ -1,7 +1,12 @@
 .testCasesContainer {
+    position: relative;
     min-height: 78vh;    
     background-color: #393e46;
     border-radius: 5px;
+}
+
+.hideScrollBar {
+    overflow: hidden;
 }
 
 .testCaseFormContainer{

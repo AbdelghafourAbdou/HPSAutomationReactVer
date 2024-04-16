@@ -1,7 +1,7 @@
 .viewTestCaseContainer {
     position: fixed;
-    top: 20%;
-    left: 18%;
+    left: 17.5%;
+    bottom: 0;
     z-index: 2;
     background-color: #2e333c;
     border-radius: 0.5em;
@@ -12,6 +12,9 @@
     gap: 1em;
 
     font-size: 1.25em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 10px;
 }
 
 .overlay {
@@ -46,6 +49,27 @@
     background-color: #295393 !important;
 }
 
+.errorsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    max-width: 90%;
+    margin: 0 auto;
+    background-color: #721c24;
+    color: #f5c6cb;
+    border-radius: 0.5em;
+}
+
+.errorsContainer div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.errorsContainer div:not(:last-child) {
+    border-right: 1px solid #cb3544;
+}
+
 .testCaseDetailsInfoREADY {
     display: flex;
     flex-direction: row;
@@ -63,9 +87,55 @@
 .testCaseDetailsInfoPASSED {
     display: flex;
     flex-direction: row;
-    
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 90%;
+    gap: 10px;
+}
+
+.testCaseDetailsInfoPASSED > * {
+    max-width: 33%;
+    margin-bottom: 0.5em;
+}
+
+.reqresTitleContainer {
+    background-color: #295393 !important;
+    border-radius: 0.5em;
+    margin-bottom: 10px;
+}
+
+.testCaseDetailsInfoPASSED pre {
+    min-height: 314px;
+    max-width: 330px;
+    overflow-x: scroll;
+    overflow-y: auto;
+    text-align: start;
+}
+
+.expectedResponse {
+    color: rgb(93, 208, 254);
 }
 
 .testCaseDetailsInfoFAILED {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    width: 90%;
+    gap: 10px;
+}
 
+.testCaseDetailsInfoFAILED > * {
+    max-width: 33%;
+    margin-bottom: 0.5em;
+}
+
+.testCaseDetailsInfoFAILED pre {
+    min-height: 314px;
+    max-height: 314px;
+    max-width: 330px;
+    overflow-x: scroll;
+    overflow-y: auto;
+    text-align: start;
+    font-size: 0.75em;
 }
