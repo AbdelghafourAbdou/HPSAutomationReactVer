@@ -9,6 +9,7 @@ import './TestCases.css';
 
 const BASE_URL = 'http://localhost:8088/pwcAutomationTest';
 const size = 6;
+document.documentElement.classList.remove('hideScrollBar');
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }) {
@@ -55,13 +56,23 @@ export default function TestCases() {
     const [runTime, setRunTime] = useState(Array(size).fill(''));
     const [viewOpen, setViewOpen] = useState([false, null]);
     const [loaderVisibility, setLoaderVisibility] = useState(false);
+    const [firstView, setFirstView] = useState(Array(size).fill(true));
 
     // swap from REST to SOAP and vice-versa
     function handleTypeChange(row) {
         const id = row.id;
         setType(prev => {
             let newArr = [...prev];
-            newArr[(id - 1) % 6] = newArr[(id - 1) % 6] === 'REST' ? 'SOAP' : 'REST';
+            if (row.testCaseResult !== 'READY' && firstView[(id - 1) % size]) {
+                newArr[(id - 1) % size] = row.type === 'REST' ? 'SOAP' : 'REST';
+                return newArr;
+            }
+            newArr[(id - 1) % size] = newArr[(id - 1) % size] === 'REST' ? 'SOAP' : 'REST';
+            return newArr;
+        });
+        setFirstView(prev => {
+            let newArr = [...prev];
+            newArr[(id - 1) % size] = false;
             return newArr;
         });
     }
@@ -82,23 +93,27 @@ export default function TestCases() {
         setRunTime(Array(size).fill(''));
     }
 
+    // handle button that views the previous test case run
     function handleViewTestCase(row) {
         document.documentElement.classList.add('hideScrollBar');
-        let moddedType = type[(row.id - 1) % 6];
-        let moddedRunTime = runTime[(row.id - 1) % size] && runTime[(row.id - 1) % 6].toLocaleString();
+        let moddedType = type[(row.id - 1) % size];
+        let moddedRunTime = runTime[(row.id - 1) % size] && runTime[(row.id - 1) % size].toLocaleString();
         let moddedRow = { ...row, moddedType, moddedRunTime };
         setViewOpen([true, moddedRow]);
     }
 
+    // handle button that runs the test case
     async function handleRunTestCase(row) {
         setLoaderVisibility(true);
         const res = await fetch(`${BASE_URL}/testCaseRunner/${row.id}/${type[(row.id - 1) % size]}`);
         const data = await res.json();
+        console.log(data);
         setLoaderVisibility(false);
         const formData = new FormData(formRef.current);
         fetcher.submit(formData, { method: 'POST' });
-        let moddedType = type[(row.id - 1) % 6];
-        let moddedRunTime = runTime[(row.id - 1) % size] && runTime[(row.id - 1) % 6].toLocaleString();
+        let moddedType = data.type;
+        data.runDate = new Date(data.runDate);
+        let moddedRunTime = data.runDate.toLocaleString();
         data?.status !== 500 ? setViewOpen([true, { ...data, moddedType, moddedRunTime }]) : null;
     }
 
@@ -183,11 +198,11 @@ export default function TestCases() {
                                     <td>{row.webServiceName}</td>
                                     <td>{row.projectName}</td>
                                     <td>{row.wsVersion}</td>
-                                    <td>{runTime[(row.id - 1) % size] && runTime[(row.id - 1) % 6].toLocaleString()}</td>
+                                    <td>{runTime[(row.id - 1) % size] && runTime[(row.id - 1) % size].toLocaleString()}</td>
                                     <td>{row.testCaseResult}</td>
                                     <td>
                                         <button onClick={() => handleTypeChange(row)}>
-                                            {type[(row.id - 1) % size]}
+                                            {firstView[(row.id - 1) % size] && row.testCaseResult !== 'READY' ? row.type : type[(row.id - 1) % size]}
                                         </button>
                                     </td>
                                     <td>

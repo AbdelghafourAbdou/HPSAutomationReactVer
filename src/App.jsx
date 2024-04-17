@@ -15,7 +15,6 @@ import './App.css'
 document.documentElement.style.setProperty('--animate-duration', '.60s');
 
 function App() {
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<Layout />} >
@@ -35,7 +34,7 @@ function App() {
 
   return (
     <RouterProvider router={router} />
-  )
+  );
 }
 
-export default App
+export default App;

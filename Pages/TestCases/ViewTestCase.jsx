@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
+import xmlFormat from 'xml-formatter';
 import info from '/infoCircle.svg';
-import './ViewTestCase.css'
+import './ViewTestCase.css';
 
 export default function ViewTestCase({ setViewOpen, row }) {
     const [displayOption, setDisplayOption] = useState([null, null]);
@@ -13,87 +14,58 @@ export default function ViewTestCase({ setViewOpen, row }) {
     }
 
     // use request/response info to create readable text for debugging
-    function turnInfoPrintable(info) {
+    function turnInfoPrintable(info, indent = '') {
         let result = '{\n';
         for (const [key, value] of Object.entries(info)) {
-            if (typeof value === 'object') {
-                result += ` ${key}: {\n`;
-                for (const [innerKey, innerValue] of Object.entries(value)) {
-                    result += `   ${innerKey}: ${innerValue},\n`;
-                }
-                result += '},\n';
-                continue;
+            result += `${indent} ${key}: `;
+            if (typeof value === 'object' && value) {
+                result += `${turnInfoPrintable(value, `${indent} `)},\n`;
+            } else {
+                result += `${value},\n`;
             }
-            result += ` ${key}: ${value},\n`;
         }
-        result += '}';
+        result += `${indent}}`;
         return result;
     }
-
-    // use request/response info to create readable text for debugging (this version goes 4 lvls deeper, the first has a max of 2 lvls)
-    function turnInfoPrintableDeeper(info) {
-        let result = '{\n';
-        for (const [key, value] of Object.entries(info)) {
-            if (typeof value === 'object') {
-                result += ` ${key}: {\n`;
-                for (const [innerKey, innerValue] of Object.entries(value)) {
-                    if (typeof innerValue === 'object') {
-                        result += `  ${innerKey}: {\n`;
-                        for (const [secondInnerKey, secondInnerValue] of Object.entries(innerValue)) {
-                            if (typeof secondInnerValue === 'object') {
-                                result += `   ${secondInnerKey}: {\n`;
-                                for (const [thirdInnerKey, thirdInnerValue] of Object.entries(secondInnerValue)) {
-                                    if (typeof thirdInnerValue === 'object') {
-                                        result += `    ${thirdInnerKey}: {\n`;
-                                        for (const [fourthInnerKey, fourthInnerValue] of Object.entries(thirdInnerValue)) {
-                                            result += `     ${fourthInnerKey}: ${fourthInnerValue},\n`;
-                                        }
-                                        result += '    },\n';
-                                        continue;
-                                    }
-                                    result += `    ${thirdInnerKey}: ${thirdInnerValue},\n`;
-                                }
-                                result += '   },\n';
-                                continue;
-                            }
-                            result += `    ${secondInnerKey}: ${secondInnerValue},\n`;
-                        }
-                        result += '  },\n';
-                        continue;
-                    }
-                    result += `   ${innerKey}: ${innerValue},\n`;
-                }
-                result += ' },\n';
-                continue;
-            }
-            result += ` ${key}: ${value},\n`;
-        }
-        result += '}';
-        return result;
-    }
-
+    
     // set which info to display depending on the row data
     useEffect(() => {
         if (row.testCaseResult === 'READY') {
             setDisplayOption([0, null]);
         } else if (row.testCaseResult === 'PASSED') {
-            setDisplayOption([1, {
-                request: turnInfoPrintable(JSON.parse(row.request)),
-                response: turnInfoPrintable(JSON.parse(row.response)),
-                expectedResponse: turnInfoPrintable(JSON.parse(row.expectedResponse)),
-            }]);
+            (row.type === 'REST' &&
+                setDisplayOption([1, {
+                    request: turnInfoPrintable(JSON.parse(row.request)),
+                    response: turnInfoPrintable(JSON.parse(row.response)),
+                    expectedResponse: turnInfoPrintable(JSON.parse(row.expectedResponse)),
+                }]));
+            (row.type === 'SOAP' &&
+                setDisplayOption([1, {
+                    request: xmlFormat(row.request),
+                    response: xmlFormat(row.response),
+                    expectedResponse: xmlFormat(row.expectedResponse),
+                }]))
         } else if (row.testCaseResult === 'FAILED') {
             let frags = []
             row.errors.map((val) => {
                 frags.push(val.split(','));
             });
-            setDisplayOption([-1, {
-                request: turnInfoPrintableDeeper(JSON.parse(row.request)),
-                response: turnInfoPrintable(JSON.parse(row.response)),
-                expectedResponse: turnInfoPrintable(JSON.parse(row.expectedResponse)),
-                errors: frags,
-            }]);
+            (row.type === 'REST' &&
+                setDisplayOption([-1, {
+                    request: turnInfoPrintable(JSON.parse(row.request)),
+                    response: turnInfoPrintable(JSON.parse(row.response)),
+                    expectedResponse: turnInfoPrintable(JSON.parse(row.expectedResponse)),
+                    errors: frags,
+                }]));
+            (row.type === 'SOAP' &&
+                setDisplayOption([-1, {
+                    request: xmlFormat(row.request),
+                    response: xmlFormat(row.response),
+                    expectedResponse: xmlFormat(row.expectedResponse),
+                    errors: frags,
+                }]));
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [row]);
 
     return (
@@ -121,7 +93,7 @@ export default function ViewTestCase({ setViewOpen, row }) {
                         <tbody>
                             <tr key="testCaseDetails">
                                 <td>{row.id}</td>
-                                <td>{row.moddedType}</td>
+                                <td>{row.testCaseResult === 'READY' ? row.moddedType : row.type}</td>
                                 <td>{row.name}</td>
                                 <td>{row.projectName}</td>
                                 <td>{row.moddedRunTime}</td>
