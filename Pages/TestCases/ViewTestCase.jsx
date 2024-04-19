@@ -41,17 +41,18 @@ export default function ViewTestCase({ setViewOpen, row }) {
                     response: turnInfoPrintable(JSON.parse(row.response)),
                     expectedResponse: turnInfoPrintable(JSON.parse(row.expectedResponse)),
                 }]);
-                setCreatedCard(row.response.cardNumber);
+                row.name === 'CreateDebitCard-Success' && setCreatedCard(JSON.parse(row.response).cardNumber);
             } else if (row.type === 'SOAP') {
                 setDisplayOption([1, {
                     request: xmlFormat(row.request),
                     response: xmlFormat(row.response),
                     expectedResponse: xmlFormat(row.expectedResponse),
                 }]);
-                let parser = new DOMParser().parseFromString(row, 'text/xml');
-                setCreatedCard(parser.getElementsByTagName('CardNumber')[0].textContent);
+                if (row.name === 'CreateDebitCard-Success') {
+                    let parser = new DOMParser().parseFromString(row.response, 'text/xml');
+                    setCreatedCard(parser.getElementsByTagName('CardNumber')[0].textContent);
+                }
             }
-            localStorage.setItem('latestCard', createdCard);
         } else if (row.testCaseResult === 'FAILED') {
             let frags = []
             row.errors.map((val) => {
@@ -74,6 +75,11 @@ export default function ViewTestCase({ setViewOpen, row }) {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [row]);
+
+    // set the latestCard var in localStorage to the newest created card
+    useEffect(() => {
+        localStorage.setItem('latestCard', createdCard);
+    }, [createdCard]);
 
     return (
         <>
