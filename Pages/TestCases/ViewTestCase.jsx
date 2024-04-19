@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
+import Toast from '../../Components/ReUsable Library/Toast/Toast';
 import xmlFormat from 'xml-formatter';
 import info from '/infoCircle.svg';
 import './ViewTestCase.css';
 
 export default function ViewTestCase({ setViewOpen, row }) {
     const [displayOption, setDisplayOption] = useState([null, null]);
+    const [createdCard, setCreatedCard] = useState(null);
 
     // close details page
     function handleCloseDetails() {
@@ -27,24 +29,29 @@ export default function ViewTestCase({ setViewOpen, row }) {
         result += `${indent}}`;
         return result;
     }
-    
+
     // set which info to display depending on the row data
     useEffect(() => {
         if (row.testCaseResult === 'READY') {
             setDisplayOption([0, null]);
         } else if (row.testCaseResult === 'PASSED') {
-            (row.type === 'REST' &&
+            if (row.type === 'REST') {
                 setDisplayOption([1, {
                     request: turnInfoPrintable(JSON.parse(row.request)),
                     response: turnInfoPrintable(JSON.parse(row.response)),
                     expectedResponse: turnInfoPrintable(JSON.parse(row.expectedResponse)),
-                }]));
-            (row.type === 'SOAP' &&
+                }]);
+                setCreatedCard(row.response.cardNumber);
+            } else if (row.type === 'SOAP') {
                 setDisplayOption([1, {
                     request: xmlFormat(row.request),
                     response: xmlFormat(row.response),
                     expectedResponse: xmlFormat(row.expectedResponse),
-                }]))
+                }]);
+                let parser = new DOMParser().parseFromString(row, 'text/xml');
+                setCreatedCard(parser.getElementsByTagName('CardNumber')[0].textContent);
+            }
+            localStorage.setItem('latestCard', createdCard);
         } else if (row.testCaseResult === 'FAILED') {
             let frags = []
             row.errors.map((val) => {
@@ -65,7 +72,7 @@ export default function ViewTestCase({ setViewOpen, row }) {
                     errors: frags,
                 }]));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [row]);
 
     return (
@@ -144,6 +151,11 @@ export default function ViewTestCase({ setViewOpen, row }) {
                                 {displayOption[1]['expectedResponse']}
                             </pre>
                         </div>
+                        {row.name === 'CreateDebitCard-Success' &&
+                            <Toast event='success'>
+                                <p>Test Case Success</p>
+                                <p>Card Created: {createdCard}</p>
+                            </Toast>}
                     </div>}
                 {(displayOption[0] === -1) &&
                     <div className='testCaseDetailsInfoFAILED'>

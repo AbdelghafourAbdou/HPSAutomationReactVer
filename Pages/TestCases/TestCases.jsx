@@ -192,30 +192,30 @@ export default function TestCases() {
                         </thead>
                         <tbody>
                             {data.map(row =>
-                                <tr key={`data row ${row.id}`}>
-                                    <td>{row.id}</td>
-                                    <td>{row.name}</td>
-                                    <td>{row.webServiceName}</td>
-                                    <td>{row.projectName}</td>
-                                    <td>{row.wsVersion}</td>
-                                    <td>{runTime[(row.id - 1) % size] && runTime[(row.id - 1) % size].toLocaleString()}</td>
-                                    <td>{row.testCaseResult}</td>
-                                    <td>
-                                        <button onClick={() => handleTypeChange(row)}>
-                                            {firstView[(row.id - 1) % size] && row.testCaseResult !== 'READY' ? row.type : type[(row.id - 1) % size]}
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <div className='testCaseButtons'>
-                                            <button onClick={() => handleViewTestCase(row)} >
-                                                <img src={eye} alt="View Button" className='lightColor' />
+                                    <tr key={`data row ${row.id}`}>
+                                        <td>{row.id}</td>
+                                        <td>{row.name}</td>
+                                        <td>{row.webServiceName}</td>
+                                        <td>{row.projectName}</td>
+                                        <td>{row.wsVersion}</td>
+                                        <td>{runTime[(row.id - 1) % size] && runTime[(row.id - 1) % size].toLocaleString()}</td>
+                                        <td>{row.testCaseResult}</td>
+                                        <td>
+                                            <button onClick={() => handleTypeChange(row)}>
+                                                {firstView[(row.id - 1) % size] && row.testCaseResult !== 'READY' ? row.type : type[(row.id - 1) % size]}
                                             </button>
-                                            <button onClick={() => handleRunTestCase(row)} >
-                                                <img src={play} alt="Play Button" className='lightColor' />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <div className='testCaseButtons'>
+                                                <button onClick={() => handleViewTestCase(row)} >
+                                                    <img src={eye} alt="View Button" className='lightColor' />
+                                                </button>
+                                                <button onClick={() => handleRunTestCase(row)} >
+                                                    <img src={play} alt="Play Button" className='lightColor' />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
                             )}
                         </tbody>
                     </table>

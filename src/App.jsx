@@ -8,6 +8,7 @@ import Projects, { loader as projectsLoader } from '../Pages/Projects/Projects';
 import WebServices, { action as webServicesAction } from '../Pages/WebServices/WebServices';
 import TestCases, { action as testCasesAction } from '../Pages/TestCases/TestCases';
 import TestSuites, { action as testSuitesAction } from '../Pages/TestSuites/TestSuites';
+import CardMGT from '../Pages/CardMGT/CardMGT';
 import Administration, { loader as administrationLoader } from '../Pages/Administration/Administration';
 import { action as emailAction } from '../Pages/Administration/Configs/EmailConfig';
 import './App.css'
@@ -23,6 +24,7 @@ function App() {
         <Route path='webServices' element={<WebServices />} action={webServicesAction} errorElement={<NetworkError />} />
         <Route path='testCases' element={<TestCases />} action={testCasesAction} />
         <Route path='testSuites' element={<TestSuites />} action={testSuitesAction} />
+        <Route path='cardMGT' element={<CardMGT />} />
         <Route path='administration' element={<Administration />} errorElement={<NetworkError />}
           action={emailAction}
           loader={administrationLoader} />
