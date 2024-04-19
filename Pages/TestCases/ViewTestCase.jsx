@@ -159,8 +159,8 @@ export default function ViewTestCase({ setViewOpen, row }) {
                         </div>
                         {row.name === 'CreateDebitCard-Success' &&
                             <Toast event='success'>
-                                <p>Test Case Success</p>
-                                <p>Card Created: {createdCard}</p>
+                                <p>Latest Card Creation Success</p>
+                                <p>Latest Card Created: {createdCard}</p>
                             </Toast>}
                     </div>}
                 {(displayOption[0] === -1) &&

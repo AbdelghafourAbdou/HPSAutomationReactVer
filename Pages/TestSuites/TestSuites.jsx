@@ -35,7 +35,6 @@ export async function action({ request }) {
 export default function TestSuites() {
     const fetcher = useFetcher();
     const actionData = fetcher.data;
-    console.log(actionData);
     const status = fetcher.state;
 
     return (

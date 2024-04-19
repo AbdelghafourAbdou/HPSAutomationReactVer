@@ -51,7 +51,7 @@
     background-color: #96a7c4;
     font-size: larger;
 }
-.config h1, p {
+.config h1, .config p {
     padding: 8px;
 }
 

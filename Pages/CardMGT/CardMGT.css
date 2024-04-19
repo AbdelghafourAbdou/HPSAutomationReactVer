@@ -1,0 +1,40 @@
+.controlPanel{
+    margin: 0 auto;
+    width: 77vw;
+    height: 67vh;
+    background-color: #092635;
+    padding: 1em;
+}
+
+.latestCard {
+    font-size: 1.5em;
+    text-align: left;
+}
+
+.controlPanelDescription {
+    text-align: left;
+}
+
+.controlPanelButtons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controlPanelButton {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 67vw;
+    height: 10vh;
+    /* outline: 1px solid #ce1e1e; */
+}
+
+.controlPanelButton button {
+    background-color: #17a2b8 !important;
+    height: 8vh;
+    margin: 0.35em;
+}
+.controlPanelButton button:hover {
+    background-color: #12889acf !important;
+}
