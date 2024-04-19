@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './CardMGT.css';
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
@@ -23,6 +23,10 @@ export default function CardMGT() {
         setResults(prev => [prev[0], data, ...(prev.slice(2))]);
     }
 
+    useEffect(() => {
+        console.log(results);
+    }, [results]);
+
     return (
         <>
             <div className='titleContainer'>
@@ -35,7 +39,6 @@ export default function CardMGT() {
                     <div className='controlPanelButton'>
                         <button onClick={handleActivateCard}>Activate Card</button>
                         <p>{results[0] === null ? 'No Updates' : results[0] ? 'Card Activated Successfuly' : 'Card Activation Failed'}</p>
-                        <p>No Updates</p>
                     </div>
                     <div className='controlPanelButton'>
                         <button onClick={handleCardProfile}>Add Card Profile</button>
