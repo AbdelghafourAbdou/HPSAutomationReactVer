@@ -9,7 +9,7 @@ export default function CardMGT() {
 
     // activate the card
     async function handleActivateCard() {
-        const headers = new Headers({ 'Content-Type': 'application/json}' });
+        const headers = new Headers({ 'Content-Type': 'application/json' });
         const res = await fetch(`${BASEPATH}/activateCard?cardNumber=${latestCard}`,
             { method: 'POST', headers });
         const data = await res.json();
@@ -18,8 +18,10 @@ export default function CardMGT() {
 
     // create a card profile to the XML
     async function handleCardProfile() {
-        const res = await fetch(`${BASEPATH}/addCardProfile?cardNumber=${latestCard}`);
-        const data = await res.json();
+        const headers = new Headers({ 'Content-Type': 'text/html' });
+        const res = await fetch(`${BASEPATH}/addCardProfile?cardNumber=${latestCard}`,
+            { headers });
+        const data = await res.text();
         setResults(prev => [prev[0], data, ...(prev.slice(2))]);
     }
 
@@ -38,11 +40,11 @@ export default function CardMGT() {
                 <div className='controlPanelButtons'>
                     <div className='controlPanelButton'>
                         <button onClick={handleActivateCard}>Activate Card</button>
-                        <p>{results[0] === null ? 'No Updates' : results[0] ? 'Card Activated Successfuly' : 'Card Activation Failed'}</p>
+                        <p>{results[0] === null ? 'No Updates' : results[0] ? 'Card Activated Successfully' : 'Card Activation Failed'}</p>
                     </div>
                     <div className='controlPanelButton'>
                         <button onClick={handleCardProfile}>Add Card Profile</button>
-                        <p>{results[1] === null ? 'No Updates' : results[1].indexOf('<CardProfile') !== -1 ? 'Card Profile Added Successfuly' : 'Card Profile Addition Failed'}</p>
+                        <p>{results[1] === null ? 'No Updates' : results[1].indexOf('<CardProfile') !== -1 ? 'Card Profile Added Successfuly' : results[1]}</p>
                     </div>
                     <div className='controlPanelButton'>
                         <button>Add Base Test</button>
