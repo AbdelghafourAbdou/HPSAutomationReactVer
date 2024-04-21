@@ -5,6 +5,12 @@ export const toProper = (title) => {
     return newTitle;
 }
 
+export const toProperMultipleWords = (title) => {
+    let copiedTitle = title.split(' ');
+    let moddedTitles = copiedTitle.map(word => toProper(word));
+    return moddedTitles.join(' ');
+}
+
 export const getFormattedCurrentDateTime = () => {
     const now = new Date();
     const month = String(now.getMonth() + 1).padStart(2, '0'); // Month is zero-based

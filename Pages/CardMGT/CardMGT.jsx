@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
     getFormattedCurrentDateTime, generateSixRandomNumbers,
     getFormattedCurrentDate, getFormattedCurrentTime,
-    generateElevenNumbers, getJulianFormattedDate, toProper
+    generateElevenNumbers, getJulianFormattedDate, toProperMultipleWords
 } from '../../Utils/Utils';
 import './CardMGT.css';
 
@@ -71,7 +71,7 @@ export default function CardMGT() {
             '123': ' 10000127,Street Av'
         }
         const headers = new Headers({ 'Content-Type': 'application/json' });
-        const res = await fetch(`${BASEPATH}/addBaseTest?baseMessageString=${toProper(baseTestDetails.baseMessageStringRef)}&msgTypeString=${String(baseTestDetails.msgTypeStringRef).padStart(4, '0')}&msgHeaderString=16010200FE0000000000000000000000000000000000`,
+        const res = await fetch(`${BASEPATH}/addBaseTest?baseMessageString=${toProperMultipleWords(baseTestDetails.baseMessageStringRef)}&msgTypeString=${String(baseTestDetails.msgTypeStringRef).padStart(4, '0')}&msgHeaderString=16010200FE0000000000000000000000000000000000`,
             { method: 'POST', headers, body: JSON.stringify(message, Object.keys(message).sort()) });
         const data = await res.json();
         setResults(prev => [prev[0], prev[1], data, prev[3]]);
