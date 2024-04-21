@@ -108,6 +108,7 @@ export default function CardMGT() {
                             onChange={handleFormDataChange} placeholder='Enter Base Test Name'/>
                         <select name='msgTypeStringRef' value={baseTestDetails.msgTypeStringRef}
                             onChange={handleFormDataChange}>
+                            <option value="" key="-1">-----</option>
                             <option value="100" key="0">100</option>
                             <option value="120" key="1">120</option>
                             <option value="121" key="2">121</option>
