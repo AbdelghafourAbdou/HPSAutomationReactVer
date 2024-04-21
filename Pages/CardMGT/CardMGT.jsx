@@ -95,32 +95,47 @@ export default function CardMGT() {
                 <h2 className='latestCard'>Card: {latestCard ? latestCard : 'No Card Created Recently'}</h2>
                 <p className='controlPanelDescription'>Please use the following buttons to run your tests: </p>
                 <div className='controlPanelButtons'>
-                    <div className='controlPanelButton'>
-                        <button onClick={handleActivateCard}>Activate Card</button>
-                        <p>{results[0] === null ? 'No Updates' : results[0] ? 'Card Activated Successfully' : 'Card Activation Failed'}</p>
+                    <div className='controlPanelDoubleButton'>
+                        <div className='controlPanelButtonContainer'>
+                            <button onClick={handleActivateCard}>Activate Card</button>
+                            <p>{results[0] === null ? 'No Updates' : results[0] ? 'Card Activated Successfully' : 'Card Activation Failed'}</p>
+                        </div>
+                        <div className='controlPanelButtonContainer'>
+                            <button onClick={handleCardProfile}>Add Card Profile</button>
+                            <p>{results[1] === null ? 'No Updates' : results[1].indexOf('<CardProfile') !== -1 ? 'Card Profile Added Successfuly' : results[1]}</p>
+                        </div>
                     </div>
-                    <div className='controlPanelButton'>
-                        <button onClick={handleCardProfile}>Add Card Profile</button>
-                        <p>{results[1] === null ? 'No Updates' : results[1].indexOf('<CardProfile') !== -1 ? 'Card Profile Added Successfuly' : results[1]}</p>
-                    </div>
-                    <div className='controlPanelButton'>
-                        <input type="text" name='baseMessageStringRef' value={baseTestDetails.baseMessageStringRef}
-                            onChange={handleFormDataChange} placeholder='Enter Base Test Name'/>
-                        <select name='msgTypeStringRef' value={baseTestDetails.msgTypeStringRef}
-                            onChange={handleFormDataChange}>
-                            <option value="" key="-1">-----</option>
-                            <option value="100" key="0">100</option>
-                            <option value="120" key="1">120</option>
-                            <option value="121" key="2">121</option>
-                            <option value="400" key="3">400</option>
-                            <option value="420" key="4">420</option>
-                        </select>
-                        <button onClick={handleBaseTest}>Add Base Test</button>
-                        <p>{results[2] === null ? 'No Updates' : results[2] ? 'Base Test Added Successfully' : 'Base Test Addition Failed'}</p>
-                    </div>
-                    <div className='controlPanelButton'>
-                        <button>Create MSG File</button>
-                        <p>No Updates</p>
+                    <div className='controlPanelDoubleButton'>
+                        <div className='controlPanelButtonContainerForm'>
+                            <input type="text" name='baseMessageStringRef' value={baseTestDetails.baseMessageStringRef}
+                                onChange={handleFormDataChange} placeholder='Enter Base Test Name' />
+                            <select name='msgTypeStringRef' value={baseTestDetails.msgTypeStringRef}
+                                onChange={handleFormDataChange}>
+                                <option value="" key="-1">-----</option>
+                                <option value="100" key="0">100</option>
+                                <option value="120" key="1">120</option>
+                                <option value="121" key="2">121</option>
+                                <option value="400" key="3">400</option>
+                                <option value="420" key="4">420</option>
+                            </select>
+                            <button onClick={handleBaseTest}>Create Base Test</button>
+                            <p>{results[2] === null ? 'No Updates' : results[2] ? 'Base Test Added Successfully' : 'Base Test Addition Failed'}</p>
+                        </div>
+                        <div className='controlPanelButtonContainerForm'>
+                            <input type="text" name='baseMessageStringRef' value={baseTestDetails.baseMessageStringRef}
+                                onChange={handleFormDataChange} placeholder='Enter Base Test Name' />
+                            <select name='msgTypeStringRef' value={baseTestDetails.msgTypeStringRef}
+                                onChange={handleFormDataChange}>
+                                <option value="" key="-1">-----</option>
+                                <option value="100" key="0">100</option>
+                                <option value="120" key="1">120</option>
+                                <option value="121" key="2">121</option>
+                                <option value="400" key="3">400</option>
+                                <option value="420" key="4">420</option>
+                            </select>
+                            <button>Create MSG File</button>
+                            <p>No Updates</p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -19,22 +19,44 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
+    height: 52vh;
 }
 
-.controlPanelButton {
+.controlPanelDoubleButton {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    justify-content: space-evenly;
     width: 67vw;
-    height: 10vh;
     /* outline: 1px solid #ce1e1e; */
 }
 
-.controlPanelButton button {
+.controlPanelDoubleButton > * {
+    min-width: 265px;
+}
+
+.controlPanelButtonContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.controlPanelButtonContainerForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    min-height: 180px;
+}
+
+.controlPanelButtonContainerForm input {
+    border-radius: 5px;
+}
+
+.controlPanelDoubleButton button {
     background-color: #17a2b8 !important;
     height: 8vh;
     margin: 0.35em;
 }
-.controlPanelButton button:hover {
+.controlPanelDoubleButton button:hover {
     background-color: #12889acf !important;
 }
