@@ -12,6 +12,7 @@ export default function CardMGT() {
     const [latestCard,] = useState(localStorage.getItem('latestCard'));
     const [results, setResults] = useState(Array(4).fill(null));
     const [baseTestDetails, setBaseTestDetails] = useState({
+        amount: 0,
         baseMessageStringRef: '',
         msgTypeStringRef: '',
     });
@@ -41,8 +42,8 @@ export default function CardMGT() {
         const message = {
             '002': latestCard,
             '003': 200000,
-            '004': String(40.00 * 100).padStart(12, '0'),
-            '006': String(40.00 * 100).padStart(12, '0'),
+            '004': String(baseTestDetails.amount).padStart(12, '0'),
+            '006': String(baseTestDetails.amount).padStart(12, '0'),
             '007': getFormattedCurrentDateTime(),
             '011': field11,
             '012': getFormattedCurrentTime(),
@@ -73,13 +74,22 @@ export default function CardMGT() {
         const headers = new Headers({ 'Content-Type': 'application/json' });
         const res = await fetch(`${BASEPATH}/addBaseTest?baseMessageString=${toProperMultipleWords(baseTestDetails.baseMessageStringRef)}&msgTypeString=${String(baseTestDetails.msgTypeStringRef).padStart(4, '0')}&msgHeaderString=16010200FE0000000000000000000000000000000000`,
             { method: 'POST', headers, body: JSON.stringify(message, Object.keys(message).sort()) });
-        const data = await res.json();
+        const data = await res.text();
         setResults(prev => [prev[0], prev[1], data, prev[3]]);
     }
 
+    // handle the input fields change
     function handleFormDataChange(e) {
+        let { name, value } = e.target;
+        if (name === 'amount') {
+            value = Number(value);
+            if (!Number.isInteger(value)) {
+                value = Math.round(value * 100) / 100
+            }
+            value *= 100;
+        }
         setBaseTestDetails(prev => ({
-            ...prev, [e.target.name]: e.target.value
+            ...prev, [name]: value
         }));
     }
     useEffect(() => {
@@ -107,6 +117,8 @@ export default function CardMGT() {
                     </div>
                     <div className='controlPanelDoubleButton'>
                         <div className='controlPanelButtonContainerForm'>
+                            <input type="number" name='amount' step="0.01"
+                                onChange={handleFormDataChange} placeholder='Enter the Amount in €' />
                             <input type="text" name='baseMessageStringRef' value={baseTestDetails.baseMessageStringRef}
                                 onChange={handleFormDataChange} placeholder='Enter Base Test Name' />
                             <select name='msgTypeStringRef' value={baseTestDetails.msgTypeStringRef}
