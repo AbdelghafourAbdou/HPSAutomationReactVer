@@ -117,8 +117,8 @@ export default function CardMGT() {
             terminalProfile: 'MER_SHOP_ONUS_B1',
             isPlayable: 1,
             description: regex.exec(baseTest)[0],
-            headLine: baseTest.slice(4).replace('_', ''),
-            rootCaseSpecValues: ''
+            headLine: baseTestDetails.MSGHeadline,
+            rootCaseSpecValues: '',
         }
         const headers = new Headers({ 'Content-Type': 'application/json' });
         const res = await fetch(`${BASEPATH}/addMSG`,
