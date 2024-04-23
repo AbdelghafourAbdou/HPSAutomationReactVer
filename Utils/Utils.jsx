@@ -68,3 +68,16 @@ export const getJulianFormattedDate = () => {
     const hours = String(now.getHours()).padStart(2, '0');
     return `${lastYearChar}${daysSinceStartOfYear}${hours}`;
 }
+
+export const generateConsequentNumber = () => {
+    let latestNumber = localStorage.getItem('caseId');
+    if (latestNumber === null) {
+        localStorage.setItem('caseId', 1);
+        latestNumber = 1;
+    } else {
+        latestNumber = Number(latestNumber);
+        localStorage.setItem('caseId', latestNumber + 1);
+    }
+    let numberString = String(latestNumber).padStart(5, '0');
+    return `P${numberString}`;
+}

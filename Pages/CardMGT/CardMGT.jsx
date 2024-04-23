@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import {
     getFormattedCurrentDateTime, generateSixRandomNumbers,
     getFormattedCurrentDate, getFormattedCurrentTime,
-    generateElevenNumbers, getJulianFormattedDate, toProperMultipleWords
+    generateElevenNumbers, getJulianFormattedDate, 
+    toProperMultipleWords, generateConsequentNumber
 } from '../../Utils/Utils';
 import './CardMGT.css';
 
@@ -15,6 +16,7 @@ export default function CardMGT() {
         amount: 0,
         baseMessageStringRef: '',
         msgTypeStringRef: '',
+        MSGHeadline: '',
     });
 
     // activate the card
@@ -79,7 +81,7 @@ export default function CardMGT() {
         const res = await fetch(`${BASEPATH}/addBaseTest?baseMessageString=${toProperMultipleWords(baseTestDetails.baseMessageStringRef)}&msgTypeString=${String(baseTestDetails.msgTypeStringRef).padStart(4, '0')}&msgHeaderString=16010200FE0000000000000000000000000000000000`,
             { method: 'POST', headers, body: JSON.stringify(message, Object.keys(message).sort()) });
         const data = await res.text();
-        const regex = new RegExp('^\\d{3}_\\w+','g');
+        const regex = new RegExp('\\d{3}_\\w+', 'g');
         regex.test(data) ? localStorage.setItem('baseTest', data) : null;
         setResults(prev => [prev[0], prev[1], data, prev[3]]);
     }
@@ -98,6 +100,33 @@ export default function CardMGT() {
             ...prev, [name]: value
         }));
     }
+
+    // handle the creation of MSG File using the newly created Card Profile and Base Test
+    async function handleMSGFile() {
+        setResults(prev => [prev[0], prev[1], prev[2], null]);
+        let cardProfile = localStorage.getItem('cardProfile');
+        let baseTest = localStorage.getItem('baseTest');
+        let consequentNumber = generateConsequentNumber();
+        let regex = new RegExp('(?<=_)([a-zA-Z]+)(?=_)');
+        const message = {
+            name: `MSG_${consequentNumber}_${baseTest}`,
+            baseTestName: baseTest,
+            caseId: consequentNumber,
+            sequence: Number(consequentNumber.slice(-3)),
+            cardProfile: cardProfile.slice(19, 39),
+            terminalProfile: 'MER_SHOP_ONUS_B1',
+            isPlayable: 1,
+            description: regex.exec(baseTest)[0],
+            headLine: baseTest.slice(4).replace('_', ''),
+            rootCaseSpecValues: ''
+        }
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        const res = await fetch(`${BASEPATH}/addMSG`,
+            { method: 'POST', headers, body: JSON.stringify(message) });
+        const data = await res.text();
+        setResults(prev => [prev[0], prev[1], prev[2], data]);
+    }
+
     useEffect(() => {
         console.log(results);
     }, [results]);
@@ -137,22 +166,13 @@ export default function CardMGT() {
                                 <option value="420" key="4">420</option>
                             </select>
                             <button onClick={handleBaseTest}>Create Base Test</button>
-                            <p>{results[2] === null ? 'No Updates' : results[2] ? 'Base Test Added Successfully' : 'Base Test Addition Failed'}</p>
+                            <p>{results[2] === null ? 'No Updates' : results[2] ? 'Base Test Created Successfully' : 'Base Test Creation Failed'}</p>
                         </div>
                         <div className='controlPanelButtonContainerForm'>
-                            <input type="text" name='baseMessageStringRef' value={baseTestDetails.baseMessageStringRef}
-                                onChange={handleFormDataChange} placeholder='Enter Base Test Name' />
-                            <select name='msgTypeStringRef' value={baseTestDetails.msgTypeStringRef}
-                                onChange={handleFormDataChange}>
-                                <option value="" key="-1">-----</option>
-                                <option value="100" key="0">100</option>
-                                <option value="120" key="1">120</option>
-                                <option value="121" key="2">121</option>
-                                <option value="400" key="3">400</option>
-                                <option value="420" key="4">420</option>
-                            </select>
-                            <button>Create MSG File</button>
-                            <p>No Updates</p>
+                        <input type="text" name='MSGHeadline' value={baseTestDetails.MSGHeadline}
+                                onChange={handleFormDataChange} placeholder='Enter a Head Line' />
+                            <button onClick={handleMSGFile}>Create MSG File</button>
+                            <p>{results[3] === null ? 'No Updates' : results[3] ? 'MSG File Created Successfully' : 'MSG File Creation Failed'}</p>
                         </div>
                     </div>
                 </div>
