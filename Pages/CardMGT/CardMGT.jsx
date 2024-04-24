@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
     getFormattedCurrentDateTime, generateSixRandomNumbers,
     getFormattedCurrentDate, getFormattedCurrentTime,
-    generateElevenNumbers, getJulianFormattedDate, 
+    generateElevenNumbers, getJulianFormattedDate,
     toProperMultipleWords, generateConsequentNumber
 } from '../../Utils/Utils';
 import './CardMGT.css';
@@ -11,12 +11,13 @@ const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
 
 export default function CardMGT() {
     const [latestCard,] = useState(localStorage.getItem('latestCard'));
-    const [results, setResults] = useState(Array(4).fill(null));
-    const [baseTestDetails, setBaseTestDetails] = useState({
+    const [results, setResults] = useState(Array(5).fill(null));
+    const [cardMGTDetails, setCardMGTDetails] = useState({
         amount: 0,
         baseMessageStringRef: '',
         msgTypeStringRef: '',
         MSGHeadline: '',
+        testId: null,
     });
 
     // activate the card
@@ -42,14 +43,14 @@ export default function CardMGT() {
 
     // create a base test file for testing
     async function handleBaseTest() {
-        setResults(prev => [prev[0], prev[1], null, prev[3]]);
+        setResults(prev => [prev[0], prev[1], null, prev[3], prev[4]]);
         const field11 = generateSixRandomNumbers();
         const field32 = generateElevenNumbers();
         const message = {
             '002': latestCard,
             '003': 200000,
-            '004': String(baseTestDetails.amount).padStart(12, '0'),
-            '006': String(baseTestDetails.amount).padStart(12, '0'),
+            '004': String(cardMGTDetails.amount).padStart(12, '0'),
+            '006': String(cardMGTDetails.amount).padStart(12, '0'),
             '007': getFormattedCurrentDateTime(),
             '011': field11,
             '012': getFormattedCurrentTime(),
@@ -78,12 +79,12 @@ export default function CardMGT() {
             '123': ' 10000127,Street Av'
         }
         const headers = new Headers({ 'Content-Type': 'application/json' });
-        const res = await fetch(`${BASEPATH}/addBaseTest?baseMessageString=${toProperMultipleWords(baseTestDetails.baseMessageStringRef)}&msgTypeString=${String(baseTestDetails.msgTypeStringRef).padStart(4, '0')}&msgHeaderString=16010200FE0000000000000000000000000000000000`,
+        const res = await fetch(`${BASEPATH}/addBaseTest?baseMessageString=${toProperMultipleWords(cardMGTDetails.baseMessageStringRef)}&msgTypeString=${String(cardMGTDetails.msgTypeStringRef).padStart(4, '0')}&msgHeaderString=16010200FE0000000000000000000000000000000000`,
             { method: 'POST', headers, body: JSON.stringify(message, Object.keys(message).sort()) });
         const data = await res.text();
         const regex = new RegExp('\\d{3}_\\w+', 'g');
         regex.test(data) ? localStorage.setItem('baseTest', data) : null;
-        setResults(prev => [prev[0], prev[1], data, prev[3]]);
+        setResults(prev => [prev[0], prev[1], data, prev[3], prev[4]]);
     }
 
     // handle the input fields change
@@ -96,14 +97,14 @@ export default function CardMGT() {
             }
             value *= 100;
         }
-        setBaseTestDetails(prev => ({
+        setCardMGTDetails(prev => ({
             ...prev, [name]: value
         }));
     }
 
     // handle the creation of MSG File using the newly created Card Profile and Base Test
     async function handleMSGFile() {
-        setResults(prev => [prev[0], prev[1], prev[2], null]);
+        setResults(prev => [prev[0], prev[1], prev[2], null, prev[4]]);
         let cardProfile = localStorage.getItem('cardProfile');
         let baseTest = localStorage.getItem('baseTest');
         let consequentNumber = generateConsequentNumber();
@@ -117,14 +118,25 @@ export default function CardMGT() {
             terminalProfile: 'MER_SHOP_ONUS_B1',
             isPlayable: 1,
             description: regex.exec(baseTest)[0],
-            headLine: baseTestDetails.MSGHeadline,
+            headLine: cardMGTDetails.MSGHeadline,
             rootCaseSpecValues: '',
         }
         const headers = new Headers({ 'Content-Type': 'application/json' });
         const res = await fetch(`${BASEPATH}/addMSG`,
             { method: 'POST', headers, body: JSON.stringify(message) });
         const data = await res.text();
-        setResults(prev => [prev[0], prev[1], prev[2], data]);
+        setResults(prev => [prev[0], prev[1], prev[2], data, prev[4]]);
+    }
+
+    async function handleRunSim() {
+        setResults(prev => [...(prev.slice(0, 4)), null]);
+        const message = {
+            'choice' : cardMGTDetails.testId,
+        }
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        await fetch(`${BASEPATH}/runSim`,
+            { method: 'POST', headers, body: JSON.stringify(message) });
+        setResults(prev => [...(prev.slice(0, 4)), "Simulation Done"]);
     }
 
     useEffect(() => {
@@ -154,9 +166,9 @@ export default function CardMGT() {
                         <div className='controlPanelButtonContainerForm'>
                             <input type="number" name='amount' step="0.01"
                                 onChange={handleFormDataChange} placeholder='Enter the Amount in €' />
-                            <input type="text" name='baseMessageStringRef' value={baseTestDetails.baseMessageStringRef}
+                            <input type="text" name='baseMessageStringRef' value={cardMGTDetails.baseMessageStringRef}
                                 onChange={handleFormDataChange} placeholder='Enter Base Test Name' />
-                            <select name='msgTypeStringRef' value={baseTestDetails.msgTypeStringRef}
+                            <select name='msgTypeStringRef' value={cardMGTDetails.msgTypeStringRef}
                                 onChange={handleFormDataChange}>
                                 <option value="" key="-1">-----</option>
                                 <option value="100" key="0">100</option>
@@ -169,11 +181,17 @@ export default function CardMGT() {
                             <p>{results[2] === null ? 'No Updates' : results[2] ? 'Base Test Created Successfully' : 'Base Test Creation Failed'}</p>
                         </div>
                         <div className='controlPanelButtonContainerForm'>
-                        <input type="text" name='MSGHeadline' value={baseTestDetails.MSGHeadline}
+                            <input type="text" name='MSGHeadline' value={cardMGTDetails.MSGHeadline}
                                 onChange={handleFormDataChange} placeholder='Enter a Head Line' />
                             <button onClick={handleMSGFile}>Create MSG File</button>
                             <p>{results[3] === null ? 'No Updates' : results[3] ? 'MSG File Created Successfully' : 'MSG File Creation Failed'}</p>
                         </div>
+                    </div>
+                    <div className='controlPanelButton'>
+                        <input type="text" name='testId' value={cardMGTDetails.testId}
+                            placeholder='Enter the Test Number to Run' onChange={handleFormDataChange} />
+                        <button onClick={handleRunSim}>Run Simulator</button>
+                        <p>{results[4] === null ? 'No Updates' : 'Simulation Done'}</p>
                     </div>
                 </div>
             </div>

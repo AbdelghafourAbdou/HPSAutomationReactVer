@@ -1,9 +1,10 @@
 .controlPanel{
     margin: 0 auto;
     width: 77vw;
-    height: 67vh;
+    min-height: 67vh;
     background-color: #092635;
     padding: 1em;
+    margin-bottom: 0.5em;
 }
 
 .latestCard {
@@ -20,7 +21,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    height: 52vh;
+    min-height: 52vh;
+    gap: 0.5em;
 }
 
 .controlPanelDoubleButton {
@@ -48,15 +50,21 @@
     min-height: 180px;
 }
 
-.controlPanelButtonContainerForm input {
+.controlPanelButtonContainerForm input, .controlPanelButton input {
     border-radius: 5px;
 }
 
-.controlPanelDoubleButton button {
+.controlPanelDoubleButton button, .controlPanelButton button {
     background-color: #17a2b8 !important;
     height: 8vh;
     margin: 0.35em;
 }
-.controlPanelDoubleButton button:hover {
+.controlPanelDoubleButton button:hover, .controlPanelButton button:hover {
     background-color: #12889acf !important;
+}
+
+.controlPanelButton {
+    display: flex;
+    flex-direction: column;
+
 }
