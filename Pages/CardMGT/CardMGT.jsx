@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import xmlFormat from 'xml-formatter';
 // import {
 //     getFormattedCurrentDateTime, generateSixRandomNumbers,
 //     getFormattedCurrentDate, getFormattedCurrentTime,
@@ -13,7 +14,7 @@ const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
 // eslint-disable-next-line react-refresh/only-export-components
 export async function loader() {
     const res = await fetch(`${BASEPATH}/baseMessages`);
-    const data = await res.text();
+    const data = await res.json();
     return data;
 }
 
@@ -28,9 +29,13 @@ export default function CardMGT() {
     //     MSGHeadline: '',
     //     testId: null,
     // });
+    const [selectorChoice, setSelectorChoice] = useState({
+        baseMessage: '',
+        MSG: '',
+    });
+    const [baseMessageXML, setBaseMessageXML] = useState(null);
 
     // activate the card
-
     async function handleActivateCard() {
         setResults(prev => [null, ...(prev.slice(1))]);
         const headers = new Headers({ 'Content-Type': 'application/json' });
@@ -149,6 +154,18 @@ export default function CardMGT() {
     //     setResults(prev => [...(prev.slice(0, 4)), "Simulation Done"]);
     // }
 
+    function handleSelectChange(e) {
+        const { name, value } = e.target;
+        setSelectorChoice(prev => ({ ...prev, [name]: value }));
+    }
+    async function handleUseSelectedBaseMessage() {
+        setBaseMessageXML(null);
+        const chosenBaseMessage = selectorChoice.baseMessage;
+        const res = await fetch(`${BASEPATH}/baseMessage/${chosenBaseMessage}`);
+        const data = await res.text();
+        setBaseMessageXML(data);
+    }
+
     useEffect(() => {
         console.log(results);
     }, [results]);
@@ -205,14 +222,21 @@ export default function CardMGT() {
                     </div> */}
                     <div className='XMLEditor'>
                         <div className='XMLSelector'>
-                            <select>
-                                {laoderData.map(baseMessage =>
-                                    <option value={baseMessage} key={crypto.randomUUID}>{baseMessage}</option>)}
+                            <select name='baseMessage' value={selectorChoice.baseMessage} onChange={handleSelectChange}>
+                                <option value="" key='-1'>-------------------------------------------------</option>
+                                {laoderData.map((baseMessage, index) =>
+                                    <option value={baseMessage} key={index}>{baseMessage}</option>)}
                             </select>
-                            <button>Use Selected</button>
+                            <button onClick={handleUseSelectedBaseMessage}>Use Selected</button>
                             <button>Create New</button>
                         </div>
-                        <div></div>
+                        <div className='XMLReader'>
+                            {baseMessageXML &&
+                                    <textarea name="XMLReader" id="XMLReader" cols="80" rows="11">
+                                        {xmlFormat(baseMessageXML)}
+                                    </textarea>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
