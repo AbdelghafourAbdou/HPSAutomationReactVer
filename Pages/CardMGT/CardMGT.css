@@ -54,7 +54,7 @@
     border-radius: 5px;
 }
 
-.controlPanelDoubleButton button, .controlPanelButton button {
+.controlPanelDoubleButton button, .controlPanelButton button, .XMLSelector button {
     background-color: #17a2b8 !important;
     height: 8vh;
     margin: 0.35em;
@@ -66,5 +66,23 @@
 .controlPanelButton {
     display: flex;
     flex-direction: column;
-
 }
+
+.XMLEditor {
+    display: flex;
+    flex-direction: column;
+    width: 67vw;
+}
+
+.XMLSelector {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5em;
+}
+.XMLSelector select {
+    flex-basis: 40%;
+}
+.XMLSelector button {
+    flex-basis: 20%;
+}  
