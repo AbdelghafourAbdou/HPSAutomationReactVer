@@ -59,7 +59,7 @@
     height: 8vh;
     margin: 0.35em;
 }
-.controlPanelDoubleButton button:hover, .controlPanelButton button:hover, .XMLReader button {
+.controlPanelDoubleButton button:hover, .controlPanelButton button:hover, .XMLReader button:hover, .XMLSelector button:hover {
     background-color: #12889acf !important;
 }
 
@@ -71,7 +71,13 @@
 .XMLEditor {
     display: flex;
     flex-direction: column;
-    width: 67vw;
+    width: 68vw;
+}
+.XMLEditor > h1 {
+    text-align: left;
+    margin-left: 4.2em;
+    margin-bottom: 0.5em;
+    color: #efefef;
 }
 
 .XMLSelector {
@@ -92,4 +98,27 @@
     margin: 0.5em auto;
     border-radius: 0.5em;
     max-width: 60vw;
+}
+.XMLReader textarea {
+    padding: 0.75em;
+    padding-bottom: 1em;
+    max-width: 60vw;
+    outline: none;
+}
+
+.MSGControlButtons {
+    background-color: #7A797E;
+    border-radius: 0 0 0.5em 0.5em;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    padding-right: 1em;
+    position: relative;
+    top: -1px;
+}
+.MSGControlButtons button {
+    background-color: rgb(11, 83, 95) !important;
+}
+.MSGControlButtons button:hover {
+    background-color: rgb(7, 57, 66) !important;
 }

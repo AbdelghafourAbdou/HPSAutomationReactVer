@@ -1,39 +1,38 @@
 import { useState, useEffect } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import { useLoaderData, useFetcher } from 'react-router-dom';
 import xmlFormat from 'xml-formatter';
-// import {
-//     getFormattedCurrentDateTime, generateSixRandomNumbers,
-//     getFormattedCurrentDate, getFormattedCurrentTime,
-//     generateElevenNumbers, getJulianFormattedDate,
-//     toProperMultipleWords, generateConsequentNumber
-// } from '../../Utils/Utils';
+// import {generateConsequentNumber} from '../../Utils/Utils';
 import './CardMGT.css';
+import BaseCreation from './Creation/BaseCreation';
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function loader() {
-    const res = await fetch(`${BASEPATH}/baseMessages`);
-    const data = await res.json();
-    return data;
+    const baseMessagesRes = await fetch(`${BASEPATH}/baseMessages`);
+    const baseMessagesData = await baseMessagesRes.json();
+    const MSGRes = await fetch(`${BASEPATH}/simMessages`);
+    const MSGData = await MSGRes.json();
+    return { baseMessagesData, MSGData };
 }
 
 export default function CardMGT() {
+    const fetcher = useFetcher();
     const laoderData = useLoaderData();
+    const loadedData = fetcher.data || laoderData;
     const [latestCard,] = useState(localStorage.getItem('latestCard'));
-    const [results, setResults] = useState(Array(5).fill(null));
-    // const [cardMGTDetails, setCardMGTDetails] = useState({
-    //     amount: 0,
-    //     baseMessageStringRef: '',
-    //     msgTypeStringRef: '',
-    //     MSGHeadline: '',
-    //     testId: null,
-    // });
+    const [results, setResults] = useState(Array(2).fill(null));
+    const [baseMessageXML, setBaseMessageXML] = useState(null);
+    const [MSGXML, setMSGXML] = useState(null);
     const [selectorChoice, setSelectorChoice] = useState({
         baseMessage: '',
         MSG: '',
     });
-    const [baseMessageXML, setBaseMessageXML] = useState(null);
+    const [isCreationOpen, setIsCreationOpen] = useState({
+        baseMessage: false,
+        MSG: false,
+    })
 
     // activate the card
     async function handleActivateCard() {
@@ -47,79 +46,17 @@ export default function CardMGT() {
 
     // create a card profile to the XML
     async function handleCardProfile() {
-        setResults(prev => [prev[0], null, ...(prev.slice(2))]);
+        setResults(prev => [prev[0], null]);
         const headers = new Headers({ 'Content-Type': 'text/html' });
         const res = await fetch(`${BASEPATH}/addCardProfile?cardNumber=${latestCard}`,
             { headers });
         const data = await res.text();
         data.indexOf('<CardProfile') !== -1 ? localStorage.setItem('cardProfile', data) : null;
-        setResults(prev => [prev[0], data, ...(prev.slice(2))]);
+        setResults(prev => [prev[0], data]);
     }
-
-    // // create a base test file for testing
-    // async function handleBaseTest() {
-    //     setResults(prev => [prev[0], prev[1], null, prev[3], prev[4]]);
-    //     const field11 = generateSixRandomNumbers();
-    //     const field32 = generateElevenNumbers();
-    //     const message = {
-    //         '002': latestCard,
-    //         '003': 200000,
-    //         '004': String(cardMGTDetails.amount).padStart(12, '0'),
-    //         '006': String(cardMGTDetails.amount).padStart(12, '0'),
-    //         '007': getFormattedCurrentDateTime(),
-    //         '011': field11,
-    //         '012': getFormattedCurrentTime(),
-    //         '013': getFormattedCurrentDate(),
-    //         '014': 2801,
-    //         '018': 5999,
-    //         '019': 380,
-    //         '022': '0210',
-    //         '023': '001',
-    //         '025': '00',
-    //         '032': field32,
-    //         '035': '',  // to be filled with a query from db
-    //         '037': `${getJulianFormattedDate()}${field11}`,
-    //         '041': 'TERMID01',
-    //         '042': 'CARD ACCEPTOR  ',
-    //         '043': 'CARD ACCEPTOR TESTDATA   CASABLANCA   MA',
-    //         '049': 978,
-    //         '051': 978,
-    //         '052': '058CEFE99578CEDD',
-    //         '053': '2001010100000000',
-    //         '055': '0100669F3303204000950580000100009F37049BADBCAB9F1E08F9F9F9F9F9F9F9F99F100C0B010A03A0B00000000000009F26080123456789ABCDEF9F36020104820200009C01009F1A0208409A030101019F02060000000123005F2A0208409F0306000000000000',
-    //         '060': 45,
-    //         '062': '0000000000000000',
-    //         '063': '8000000002',
-    //         '090': `01000000000000000000${field32}00000000000`,
-    //         '123': ' 10000127,Street Av'
-    //     }
-    //     const headers = new Headers({ 'Content-Type': 'application/json' });
-    //     const res = await fetch(`${BASEPATH}/addBaseTest?baseMessageString=${toProperMultipleWords(cardMGTDetails.baseMessageStringRef)}&msgTypeString=${String(cardMGTDetails.msgTypeStringRef).padStart(4, '0')}&msgHeaderString=16010200FE0000000000000000000000000000000000`,
-    //         { method: 'POST', headers, body: JSON.stringify(message, Object.keys(message).sort()) });
-    //     const data = await res.text();
-    //     const regex = new RegExp('\\d{3}_\\w+', 'g');
-    //     regex.test(data) ? localStorage.setItem('baseTest', data) : null;
-    //     setResults(prev => [prev[0], prev[1], data, prev[3], prev[4]]);
-    // }
-
-    // // handle the input fields change
-    // function handleFormDataChange(e) {
-    //     let { name, value } = e.target;
-    //     if (name === 'amount') {
-    //         value = Number(value);
-    //         if (!Number.isInteger(value)) {
-    //             value = Math.round(value * 100) / 100
-    //         }
-    //         value *= 100;
-    //     }
-    //     setCardMGTDetails(prev => ({
-    //         ...prev, [name]: value
-    //     }));
-    // }
 
     // // handle the creation of MSG File using the newly created Card Profile and Base Test
     // async function handleMSGFile() {
-    //     setResults(prev => [prev[0], prev[1], prev[2], null, prev[4]]);
     //     let cardProfile = localStorage.getItem('cardProfile');
     //     let baseTest = localStorage.getItem('baseTest');
     //     let consequentNumber = generateConsequentNumber();
@@ -140,7 +77,6 @@ export default function CardMGT() {
     //     const res = await fetch(`${BASEPATH}/addMSG`,
     //         { method: 'POST', headers, body: JSON.stringify(message) });
     //     const data = await res.text();
-    //     setResults(prev => [prev[0], prev[1], prev[2], data, prev[4]]);
     // }
 
     // async function handleRunSim() {
@@ -154,15 +90,47 @@ export default function CardMGT() {
     //     setResults(prev => [...(prev.slice(0, 4)), "Simulation Done"]);
     // }
 
+    // handle the change of selected base message or MSG file
     function handleSelectChange(e) {
         const { name, value } = e.target;
         setSelectorChoice(prev => ({ ...prev, [name]: value }));
     }
-    async function handleUseSelectedBaseMessage() {
+    // handle the opening of selected base message
+    async function handleUseSelectedBaseMessage(baseMessageToDisplay = null) {
         setBaseMessageXML(null);
-        const chosenBaseMessage = selectorChoice.baseMessage;
-        const res = await fetch(`${BASEPATH}/baseMessage/${chosenBaseMessage}`);
+        const chosenBaseMessage = baseMessageToDisplay ? baseMessageToDisplay : selectorChoice.baseMessage;
+        if (chosenBaseMessage) {
+            const res = await fetch(`${BASEPATH}/baseMessage/${chosenBaseMessage}`);
+            const data = await res.text();
+            setBaseMessageXML(data);
+        }
+    }
+    // handle the opening of selected MSG file
+    async function handleUseSelectedMSG() {
+        setMSGXML(null);
+        const chosenMSG = selectorChoice.MSG;
+        if (chosenMSG) {
+            const res = await fetch(`${BASEPATH}/simMessage/${chosenMSG}`);
+            const data = await res.text();
+            setMSGXML(data);
+        }
+    }
+
+    // create a new base message
+    function handleCreateBaseMessage() {
+        setIsCreationOpen(prev => ({ ...prev, baseMessage: true }));
+        document.documentElement.classList.add('hideScrollBar');
+    }
+
+    // opens the base message mentionned in the MSG file
+    async function handleOpenBase() {
+        setBaseMessageXML(null);
+        let regex = new RegExp('(?<=BaseTestName=")(\\w+)(?=")');
+        const usedBase = MSGXML.match(regex);
+        const found = usedBase[0];
+        const res = await fetch(`${BASEPATH}/baseMessage/${found}`);
         const data = await res.text();
+        selectorChoice.baseMessage = found;
         setBaseMessageXML(data);
     }
 
@@ -191,19 +159,6 @@ export default function CardMGT() {
                     </div>
                     {/* <div className='controlPanelDoubleButton'>
                         <div className='controlPanelButtonContainerForm'>
-                            <input type="number" name='amount' step="0.01"
-                                onChange={handleFormDataChange} placeholder='Enter the Amount in €' />
-                            <input type="text" name='baseMessageStringRef' value={cardMGTDetails.baseMessageStringRef}
-                                onChange={handleFormDataChange} placeholder='Enter Base Test Name' />
-                            <select name='msgTypeStringRef' value={cardMGTDetails.msgTypeStringRef}
-                                onChange={handleFormDataChange}>
-                                <option value="" key="-1">-----</option>
-                                <option value="100" key="0">100</option>
-                                <option value="120" key="1">120</option>
-                                <option value="121" key="2">121</option>
-                                <option value="400" key="3">400</option>
-                                <option value="420" key="4">420</option>
-                            </select>
                             <button onClick={handleBaseTest}>Create Base Test</button>
                             <p>{results[2] === null ? 'No Updates' : results[2] ? 'Base Test Created Successfully' : 'Base Test Creation Failed'}</p>
                         </div>
@@ -221,20 +176,47 @@ export default function CardMGT() {
                         <p>{results[4] === null ? 'No Updates' : 'Simulation Done'}</p>
                     </div> */}
                     <div className='XMLEditor'>
+                        <h1>Base Message Manipulation</h1>
                         <div className='XMLSelector'>
                             <select name='baseMessage' value={selectorChoice.baseMessage} onChange={handleSelectChange}>
                                 <option value="" key='-1'>-------------------------------------------------</option>
-                                {laoderData.map((baseMessage, index) =>
+                                {loadedData.baseMessagesData.map((baseMessage, index) =>
                                     <option value={baseMessage} key={index}>{baseMessage}</option>)}
                             </select>
-                            <button onClick={handleUseSelectedBaseMessage}>Use Selected</button>
-                            <button>Create New</button>
+                            <button onClick={() => handleUseSelectedBaseMessage()}>Use Selected</button>
+                            <button onClick={handleCreateBaseMessage}>Create New</button>
+                            {isCreationOpen.baseMessage &&
+                                createPortal(<BaseCreation setIsCreationOpen={setIsCreationOpen} setSelectorChoice={setSelectorChoice}
+                                    displayBase={handleUseSelectedBaseMessage} fetcher={fetcher} />, document.body)}
                         </div>
                         <div className='XMLReader'>
                             {baseMessageXML &&
-                                    <textarea name="XMLReader" id="XMLReader" cols="80" rows="11">
-                                        {xmlFormat(baseMessageXML)}
+                                <textarea name="XMLReader" id="XMLReader" cols="80" rows="11" value={xmlFormat(baseMessageXML)} readOnly={true}>
+                                </textarea>
+                            }
+                        </div>
+                    </div>
+                    <div className='XMLEditor'>
+                        <h1>Message Manipulation</h1>
+                        <div className='XMLSelector'>
+                            <select name='MSG' value={selectorChoice.MSG} onChange={handleSelectChange}>
+                                <option value="" key='-1'>-------------------------------------------------</option>
+                                {loadedData.MSGData.map((MSG, index) =>
+                                    <option value={MSG} key={index}>{MSG}</option>)}
+                            </select>
+                            <button onClick={handleUseSelectedMSG}>Use Selected</button>
+                            <button>Create New</button>
+                        </div>
+                        <div className='XMLReader'>
+                            {MSGXML &&
+                                <>
+                                    <textarea name="XMLReader" id="XMLReader" cols="80" rows="11" value={xmlFormat(MSGXML)}>
                                     </textarea>
+                                    <div className='MSGControlButtons'>
+                                        <button onClick={handleOpenBase}>Open Base Message</button>
+                                        <button>Save</button>
+                                    </div>
+                                </>
                             }
                         </div>
                     </div>

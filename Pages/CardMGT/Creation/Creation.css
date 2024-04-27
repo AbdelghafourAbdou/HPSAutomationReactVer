@@ -1,0 +1,48 @@
+.baseCreationContainer {
+    position: fixed;
+    top: 0;
+    left: 20.5%;
+    bottom: 0;
+    min-width: 77vw;
+    z-index: 2;
+    background-color: #2e333c;
+    border-radius: 0.5em;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+
+    font-size: 1.25em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 10px 0px;
+}
+
+.mg-right {
+    margin-right: 10px;
+}
+
+.baseMessageCreationForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: stretch;
+    gap: 1em;
+    min-width: 45vw;
+}
+
+.baseMessageCreationForm > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.baseMessageCreationForm input {
+    border-radius: 0.15em;
+    min-height: 50px;
+    padding-left: 0.35em;
+}
+
+.lastButton {
+    margin-bottom: 1em;
+}
