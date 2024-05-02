@@ -29,7 +29,7 @@
     justify-content: start;
     align-items: stretch;
     gap: 1em;
-    min-width: 45vw;
+    width: 60vw;
 }
 
 .baseMessageCreationForm > div {
@@ -67,6 +67,20 @@
     padding-left: 0.35em;
     color: #fff5f5;
     width: inherit;
+}
+#fieldsTHead {
+    font-size: 1em;
+}
+
+#lastSetOfButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25em;
+    min-width: 35vw;
+    justify-content: center;
+}
+#lastSetOfButtons > button {
+    flex-basis: 48%;
 }
 
 .lastButton {

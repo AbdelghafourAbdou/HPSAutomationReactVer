@@ -79,6 +79,9 @@
     margin-bottom: 0.5em;
     color: #efefef;
 }
+#simResult {
+    flex-basis: 15%;
+}
 
 .XMLSelector {
     display: flex;
@@ -121,4 +124,8 @@
 }
 .MSGControlButtons button:hover {
     background-color: rgb(7, 57, 66) !important;
+}
+
+#simRunner {
+    max-width: 30vw;
 }

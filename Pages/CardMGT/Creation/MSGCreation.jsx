@@ -1,22 +1,44 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { generateConsequentNumber } from '../../../Utils/Utils';
+import info from '/infoCircle.svg';
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
 
-export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, displayMSG, fetcher }) {
+export default function MSGCreation({
+    setIsCreationOpen, setSelectorChoice,
+    displayMSG, fetcher, oldData, setSuccessToast
+}) {
+
+    let parser = new DOMParser();
+    let xmlDoc;
+    let message = [];
+    let tableRows = [];
+    if (oldData) {
+        xmlDoc = parser.parseFromString(oldData, "text/xml");
+        message = xmlDoc.getElementsByTagName("SimMessage");
+        let fields = xmlDoc.getElementsByTagName("Field");
+        let fieldsArray = [...fields];
+        tableRows = fieldsArray.map(field => ({
+            number: field.getAttribute("Number"),
+            subField: field.getAttribute("Subfield"),
+            specValType: field.getAttribute("SpecValType"),
+            specValSubType: field.getAttribute("SpecValSubType"),
+            value: field.getAttribute("Value")
+        }));
+    }
     const [MSGDetails, setMSGDetails] = useState({
-        name: '',
-        baseTestName: '',
-        caseId: '',
-        sequence: '',
-        cardProfile: '',
-        terminalProfile: '',
-        isPlayable: '',
-        description: '',
-        headLine: '',
+        name: message[0]?.getAttribute("Name") || '',
+        baseTestName: message[0]?.getAttribute("BaseTestName") || '',
+        caseId: message[0]?.getAttribute("CaseId") || '',
+        sequence: message[0]?.getAttribute("Sequence") || '',
+        cardProfile: message[0]?.getAttribute("CardProfile") || '',
+        terminalProfile: message[0]?.getAttribute("TerminalProfile") || '',
+        isPlayable: message[0]?.getAttribute("IsPlayable") || '',
+        description: message[0]?.getAttribute("HeadLine") || '',
+        headLine: message[0]?.getAttribute("Description") || '',
         rootCaseSpecValues: {
-            fields: [],
+            fields: tableRows,
         },
     });
     const [addRowDetails, setAddRowDetails] = useState([false, {
@@ -48,18 +70,30 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
 
     // handle the closing of the creation form
     function handleCloseCreation() {
-        setIsCreationOpen(prev => ({ ...prev, MSG: false }));
+        oldData ? setIsCreationOpen(prev => ({ ...prev, MSGEdit: false }))
+            : setIsCreationOpen(prev => ({ ...prev, MSG: false }));
         document.documentElement.classList.remove('hideScrollBar');
     }
 
     // handle the creation of the MSG file
-    async function handleMSGFileCreation(e) {
+    async function handleMSGFileCreation(e, altSequence = false) {
         e.preventDefault();
+        let name, caseId, sequence;
+        if (altSequence) {
+            let consequentNumber = generateConsequentNumber();
+            name = `MSG_${consequentNumber}_${MSGDetails.baseTestName}`;
+            caseId = consequentNumber;
+            sequence = Number(consequentNumber.slice(-3));
+        } else {
+            name = MSGDetails.name;
+            caseId = MSGDetails.caseId;
+            sequence = MSGDetails.sequence;
+        }
         const message = {
-            name: MSGDetails.name,
+            name: name,
             baseTestName: MSGDetails.baseTestName,
-            caseId: MSGDetails.caseId,
-            sequence: MSGDetails.sequence,
+            caseId: caseId,
+            sequence: sequence,
             cardProfile: MSGDetails.cardProfile,
             terminalProfile: MSGDetails.terminalProfile,
             isPlayable: MSGDetails.isPlayable,
@@ -72,11 +106,14 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
             { method: 'POST', headers, body: JSON.stringify(message) });
         const createdMessage = await res.text();
 
-        setIsCreationOpen(prev => ({ ...prev, MSG: false }));
+        oldData ? setIsCreationOpen(prev => ({ ...prev, MSGEdit: false }))
+            : setIsCreationOpen(prev => ({ ...prev, MSG: false }));
         document.documentElement.classList.remove('hideScrollBar');
         fetcher.load('/cardMGT');
         setSelectorChoice(prev => ({ ...prev, MSG: createdMessage }));
         displayMSG(createdMessage);
+        let successMessage = altSequence ? "Created" : "Updated";
+        setSuccessToast([true, `MSG File ${successMessage}`]);
     }
 
     // handle the add/save row button
@@ -174,13 +211,14 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
                     </div>
                     <div>
                         <table>
-                            <thead>
+                            <thead id='fieldsTHead'>
                                 <tr>
                                     <th>Number</th>
                                     <th>Subfield</th>
                                     <th>SpecValType</th>
                                     <th>SpecValSubType</th>
                                     <th>Value</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id='addRowBody'>
@@ -192,10 +230,18 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
                                             <td>{field.specValType}</td>
                                             <td>{field.specValSubType}</td>
                                             <td>{field.value}</td>
+                                            <td></td>
                                         </tr>)
                                 }
                             </tbody>
                         </table>
+                        {MSGDetails.rootCaseSpecValues.fields.length == 0 &&
+                            <div className='centeringDiv'>
+                                <div className='testSuitesInfo'>
+                                    <img src={info} alt="Information Circle" className='lightColor' />
+                                    <h1>No Rows Added Yet. Please Use the Button Below.</h1>
+                                </div>
+                            </div>}
                         {addRowDetails[0] &&
                             <div className='addRowContainer'>
                                 <div>
@@ -227,7 +273,14 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
                         }
                         <button type='button' onClick={handelAddRow} id='MSGTableButton'>{addRowDetails[0] ? 'Save Row' : 'Add Row'}</button>
                     </div>
-                    <button className='lastButton' onClick={handleMSGFileCreation}>Save MSG File</button>
+                    {
+                        oldData ?
+                            <div id='lastSetOfButtons' className='lastButton'>
+                                <button onClick={(e) => handleMSGFileCreation(e)}>Overwrite Existing MSG</button>
+                                <button onClick={(e) => handleMSGFileCreation(e, true)}>Create New MSG</button>
+                            </div>
+                            : <button className='lastButton' onClick={(e) => handleMSGFileCreation(e)}>Save MSG File</button>
+                    }
                 </form>
             </div>
         </>

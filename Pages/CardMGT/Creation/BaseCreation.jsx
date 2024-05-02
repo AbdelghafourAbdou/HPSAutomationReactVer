@@ -10,7 +10,7 @@ import './Creation.css';
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
 
-export default function BaseCreation({ setIsCreationOpen, setSelectorChoice, displayBase, fetcher }) {
+export default function BaseCreation({ setIsCreationOpen, setSelectorChoice, displayBase, fetcher, setSuccessToast }) {
     const [baseMessageDetails, setbBaseMessageDetails] = useState({
         baseMessage: '',
         msgType: '',
@@ -102,6 +102,7 @@ export default function BaseCreation({ setIsCreationOpen, setSelectorChoice, dis
         fetcher.load('/cardMGT');
         setSelectorChoice(prev => ({ ...prev, baseMessage: createdMessage}));
         displayBase(createdMessage);
+        setSuccessToast([true, "Base Message Created"]);
     }
 
     // handle the closing of the creation form
