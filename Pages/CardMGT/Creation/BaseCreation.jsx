@@ -97,7 +97,7 @@ export default function BaseCreation({ setIsCreationOpen, setSelectorChoice, dis
         const regex = new RegExp('\\d{3}_\\w+', 'g');
         regex.test(createdMessage) ? localStorage.setItem('baseTest', createdMessage) : null;
 
-        setIsCreationOpen(prev => ({ ...prev, baseMessage: false }))
+        setIsCreationOpen(prev => ({ ...prev, baseMessage: false }));
         document.documentElement.classList.remove('hideScrollBar');
         fetcher.load('/cardMGT');
         setSelectorChoice(prev => ({ ...prev, baseMessage: createdMessage}));

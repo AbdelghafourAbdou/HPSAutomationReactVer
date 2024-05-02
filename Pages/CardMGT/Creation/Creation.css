@@ -41,6 +41,32 @@
     border-radius: 0.15em;
     min-height: 50px;
     padding-left: 0.35em;
+    color: #fff5f5;
+}
+
+#addRowBody td{
+    text-align: center !important;
+}
+
+.addRowContainer > div {
+    display: flex;
+    flex-direction: column;
+    max-width: 40vw;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+#MSGTableButton {
+    width: 35vw;
+    margin: 10px auto;
+}
+
+.baseMessageCreationForm table {
+    border-radius: 0.15em;
+    min-height: 50px;
+    padding-left: 0.35em;
+    color: #fff5f5;
+    width: inherit;
 }
 
 .lastButton {

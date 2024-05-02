@@ -1,9 +1,235 @@
-import { } from 'react'
+/* eslint-disable react/prop-types */
+import { useState } from 'react';
+import { generateConsequentNumber } from '../../../Utils/Utils';
 
-export default function MSGCreation() {
+const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
+
+export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, displayMSG, fetcher }) {
+    const [MSGDetails, setMSGDetails] = useState({
+        name: '',
+        baseTestName: '',
+        caseId: '',
+        sequence: '',
+        cardProfile: '',
+        terminalProfile: '',
+        isPlayable: '',
+        description: '',
+        headLine: '',
+        rootCaseSpecValues: {
+            fields: [],
+        },
+    });
+    const [addRowDetails, setAddRowDetails] = useState([false, {
+        number: "",
+        subField: "",
+        specValType: "",
+        specValSubType: "",
+        value: ""
+    }]);
+
+    // prefill the form with auto generated data
+    function preFillForm() {
+        let cardProfile = localStorage.getItem('cardProfile');
+        let baseTest = localStorage.getItem('baseTest');
+        let consequentNumber = generateConsequentNumber();
+        let regex = new RegExp('(?<=_)([a-zA-Z]+)(?=_)');
+        setMSGDetails(prev => ({
+            ...prev,
+            name: `MSG_${consequentNumber}_${baseTest}`,
+            baseTestName: baseTest,
+            caseId: consequentNumber,
+            sequence: Number(consequentNumber.slice(-3)),
+            cardProfile: cardProfile.slice(19, 39),
+            terminalProfile: 'MER_SHOP_ONUS_B1',
+            isPlayable: 1,
+            description: regex.exec(baseTest)[0],
+        }));
+    }
+
+    // handle the closing of the creation form
+    function handleCloseCreation() {
+        setIsCreationOpen(prev => ({ ...prev, MSG: false }));
+        document.documentElement.classList.remove('hideScrollBar');
+    }
+
+    // handle the creation of the MSG file
+    async function handleMSGFileCreation(e) {
+        e.preventDefault();
+        const message = {
+            name: MSGDetails.name,
+            baseTestName: MSGDetails.baseTestName,
+            caseId: MSGDetails.caseId,
+            sequence: MSGDetails.sequence,
+            cardProfile: MSGDetails.cardProfile,
+            terminalProfile: MSGDetails.terminalProfile,
+            isPlayable: MSGDetails.isPlayable,
+            description: MSGDetails.description,
+            headLine: MSGDetails.headLine,
+            rootCaseSpecValues: MSGDetails.rootCaseSpecValues,
+        }
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        const res = await fetch(`${BASEPATH}/addMSG`,
+            { method: 'POST', headers, body: JSON.stringify(message) });
+        const createdMessage = await res.text();
+
+        setIsCreationOpen(prev => ({ ...prev, MSG: false }));
+        document.documentElement.classList.remove('hideScrollBar');
+        fetcher.load('/cardMGT');
+        setSelectorChoice(prev => ({ ...prev, MSG: createdMessage }));
+        displayMSG(createdMessage);
+    }
+
+    // handle the add/save row button
+    function handelAddRow() {
+        if (!addRowDetails[0]) {
+            setAddRowDetails(prev => ([true, prev[1]]));
+        } else {
+            const field = addRowDetails[1];
+            setMSGDetails(prev => ({ ...prev, rootCaseSpecValues: { fields: [...(prev.rootCaseSpecValues.fields), field] } }));
+            setAddRowDetails([false, {
+                number: "",
+                subField: "",
+                specValType: "",
+                specValSubType: "",
+                value: ""
+            }]);
+        }
+    }
+    // handle change of add row inputs
+    function handleRowInsertionChange(e) {
+        let { name, value } = e.target;
+        setAddRowDetails(prev => ([prev[0], {
+            ...prev[1], [name]: value
+        }]));
+    }
+
+    // handle the input fields change
+    function handleFormDataChange(e) {
+        let { name, value } = e.target;
+        setMSGDetails(prev => ({
+            ...prev, [name]: value
+        }));
+    }
+
     return (
-        <div>
-
-        </div>
+        <>
+            <div className='overlay'></div>
+            <div className='baseCreationContainer'>
+                <div className='testCaseTitle'>
+                    <h1>MSG File Creation</h1>
+                    <div>
+                        <button onClick={preFillForm} className='mg-right'>
+                            Pre-Fill
+                        </button>
+                        <button onClick={handleCloseCreation}>
+                            Back &rarr;
+                        </button>
+                    </div>
+                </div>
+                <form method='post' className='baseMessageCreationForm'>
+                    <div>
+                        <label htmlFor="MSGName">MSG Name:</label>
+                        <input id='MSGName' type="text" name='MSGName' value={MSGDetails.name}
+                            onChange={handleFormDataChange} placeholder='Enter MSG Name' />
+                    </div>
+                    <div>
+                        <label htmlFor="headLine">Headline:</label>
+                        <input id='headLine' type="text" name='headLine' value={MSGDetails.headLine}
+                            onChange={handleFormDataChange} placeholder='Enter Headline' />
+                    </div>
+                    <div>
+                        <label htmlFor="baseTestName">Base Test Name:</label>
+                        <input id='baseTestName' type="text" name='baseTestName' value={MSGDetails.baseTestName}
+                            onChange={handleFormDataChange} placeholder='Enter Base Test Name' />
+                    </div>
+                    <div>
+                        <label htmlFor="caseId">Case ID:</label>
+                        <input id='caseId' type="text" name='caseId' value={MSGDetails.caseId}
+                            onChange={handleFormDataChange} placeholder='Enter Case ID' />
+                    </div>
+                    <div>
+                        <label htmlFor="sequence">Sequence Number:</label>
+                        <input id='sequence' type="text" name='sequence' value={MSGDetails.sequence}
+                            onChange={handleFormDataChange} placeholder='Enter Sequence Number' />
+                    </div>
+                    <div>
+                        <label htmlFor="cardProfile">Card Profile:</label>
+                        <input id='cardProfile' type="text" name='cardProfile' value={MSGDetails.cardProfile}
+                            onChange={handleFormDataChange} placeholder='Enter Card Profile' />
+                    </div>
+                    <div>
+                        <label htmlFor="terminalProfile">Terminal Profile:</label>
+                        <input id='terminalProfile' type="text" name='terminalProfile' value={MSGDetails.terminalProfile}
+                            onChange={handleFormDataChange} placeholder='Enter Terminal Profile' />
+                    </div>
+                    <div>
+                        <label htmlFor="isPlayable">Playability:</label>
+                        <input id='isPlayable' type="text" name='isPlayable' value={MSGDetails.isPlayable}
+                            onChange={handleFormDataChange} placeholder='Enter IsPlayable' />
+                    </div>
+                    <div>
+                        <label htmlFor="description">Description:</label>
+                        <input id='description' type="text" name='description' value={MSGDetails.description}
+                            onChange={handleFormDataChange} placeholder='Enter Description' />
+                    </div>
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Number</th>
+                                    <th>Subfield</th>
+                                    <th>SpecValType</th>
+                                    <th>SpecValSubType</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id='addRowBody'>
+                                {MSGDetails.rootCaseSpecValues.fields.length > 0 &&
+                                    MSGDetails.rootCaseSpecValues.fields.map((field) =>
+                                        <tr key={field.number}>
+                                            <td>{field.number}</td>
+                                            <td>{field.subField}</td>
+                                            <td>{field.specValType}</td>
+                                            <td>{field.specValSubType}</td>
+                                            <td>{field.value}</td>
+                                        </tr>)
+                                }
+                            </tbody>
+                        </table>
+                        {addRowDetails[0] &&
+                            <div className='addRowContainer'>
+                                <div>
+                                    <label htmlFor="number">Field Number: </label>
+                                    <input id='number' type='number' name='number' value={addRowDetails[1].number}
+                                        onChange={handleRowInsertionChange} placeholder='Enter Field Number' />
+                                </div>
+                                <div>
+                                    <label htmlFor="subField">Field Sub Field: </label>
+                                    <input id='subField' type="text" name='subField' value={addRowDetails[1].subField}
+                                        onChange={handleRowInsertionChange} placeholder='Enter Field Sub Field' />
+                                </div>
+                                <div>
+                                    <label htmlFor="specValType">Field specValType: </label>
+                                    <input id='specValType' type="number" name='specValType' value={addRowDetails[1].specValType}
+                                        onChange={handleRowInsertionChange} placeholder='Enter Field specValType' />
+                                </div>
+                                <div>
+                                    <label htmlFor="specValSubType">Field specValSubType: </label>
+                                    <input id='specValSubType' type="number" name='specValSubType' value={addRowDetails[1].specValSubType}
+                                        onChange={handleRowInsertionChange} placeholder='Enter Field specValSubType' />
+                                </div>
+                                <div>
+                                    <label htmlFor="value">Field Value: </label>
+                                    <input id='value' type="text" name='value' value={addRowDetails[1].value}
+                                        onChange={handleRowInsertionChange} placeholder='Enter Field Value' />
+                                </div>
+                            </div>
+                        }
+                        <button type='button' onClick={handelAddRow} id='MSGTableButton'>{addRowDetails[0] ? 'Save Row' : 'Add Row'}</button>
+                    </div>
+                    <button className='lastButton' onClick={handleMSGFileCreation}>Save MSG File</button>
+                </form>
+            </div>
+        </>
     )
 }

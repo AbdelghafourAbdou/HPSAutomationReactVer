@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLoaderData, useFetcher } from 'react-router-dom';
 import xmlFormat from 'xml-formatter';
+import BaseCreation from './Creation/BaseCreation';
+import MSGCreation from './Creation/MSGCreation';
 // import {generateConsequentNumber} from '../../Utils/Utils';
 import './CardMGT.css';
-import BaseCreation from './Creation/BaseCreation';
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
 
@@ -55,30 +56,6 @@ export default function CardMGT() {
         setResults(prev => [prev[0], data]);
     }
 
-    // // handle the creation of MSG File using the newly created Card Profile and Base Test
-    // async function handleMSGFile() {
-    //     let cardProfile = localStorage.getItem('cardProfile');
-    //     let baseTest = localStorage.getItem('baseTest');
-    //     let consequentNumber = generateConsequentNumber();
-    //     let regex = new RegExp('(?<=_)([a-zA-Z]+)(?=_)');
-    //     const message = {
-    //         name: `MSG_${consequentNumber}_${baseTest}`,
-    //         baseTestName: baseTest,
-    //         caseId: consequentNumber,
-    //         sequence: Number(consequentNumber.slice(-3)),
-    //         cardProfile: cardProfile.slice(19, 39),
-    //         terminalProfile: 'MER_SHOP_ONUS_B1',
-    //         isPlayable: 1,
-    //         description: regex.exec(baseTest)[0],
-    //         headLine: cardMGTDetails.MSGHeadline,
-    //         rootCaseSpecValues: '',
-    //     }
-    //     const headers = new Headers({ 'Content-Type': 'application/json' });
-    //     const res = await fetch(`${BASEPATH}/addMSG`,
-    //         { method: 'POST', headers, body: JSON.stringify(message) });
-    //     const data = await res.text();
-    // }
-
     // async function handleRunSim() {
     //     setResults(prev => [...(prev.slice(0, 4)), null]);
     //     const message = {
@@ -106,9 +83,10 @@ export default function CardMGT() {
         }
     }
     // handle the opening of selected MSG file
-    async function handleUseSelectedMSG() {
+    async function handleUseSelectedMSG(MSGToDisplay = null) {
         setMSGXML(null);
-        const chosenMSG = selectorChoice.MSG;
+        const chosenMSG = MSGToDisplay ? MSGToDisplay : selectorChoice.MSG;
+        console.log(chosenMSG);
         if (chosenMSG) {
             const res = await fetch(`${BASEPATH}/simMessage/${chosenMSG}`);
             const data = await res.text();
@@ -119,6 +97,11 @@ export default function CardMGT() {
     // create a new base message
     function handleCreateBaseMessage() {
         setIsCreationOpen(prev => ({ ...prev, baseMessage: true }));
+        document.documentElement.classList.add('hideScrollBar');
+    }
+    // create a new MSG file
+    function handleCreateMSG() {
+        setIsCreationOpen(prev => ({ ...prev, MSG: true }));
         document.documentElement.classList.add('hideScrollBar');
     }
 
@@ -158,10 +141,6 @@ export default function CardMGT() {
                         </div>
                     </div>
                     {/* <div className='controlPanelDoubleButton'>
-                        <div className='controlPanelButtonContainerForm'>
-                            <button onClick={handleBaseTest}>Create Base Test</button>
-                            <p>{results[2] === null ? 'No Updates' : results[2] ? 'Base Test Created Successfully' : 'Base Test Creation Failed'}</p>
-                        </div>
                         <div className='controlPanelButtonContainerForm'>
                             <input type="text" name='MSGHeadline' value={cardMGTDetails.MSGHeadline}
                                 onChange={handleFormDataChange} placeholder='Enter a Head Line' />
@@ -204,17 +183,20 @@ export default function CardMGT() {
                                 {loadedData.MSGData.map((MSG, index) =>
                                     <option value={MSG} key={index}>{MSG}</option>)}
                             </select>
-                            <button onClick={handleUseSelectedMSG}>Use Selected</button>
-                            <button>Create New</button>
+                            <button onClick={() => handleUseSelectedMSG()}>Use Selected</button>
+                            <button onClick={handleCreateMSG}>Create New</button>
+                            {isCreationOpen.MSG &&
+                                createPortal(<MSGCreation setIsCreationOpen={setIsCreationOpen} setSelectorChoice={setSelectorChoice}
+                                    displayMSG={handleUseSelectedMSG} fetcher={fetcher} />, document.body)}
                         </div>
                         <div className='XMLReader'>
                             {MSGXML &&
                                 <>
-                                    <textarea name="XMLReader" id="XMLReader" cols="80" rows="11" value={xmlFormat(MSGXML)}>
+                                    <textarea name="XMLReader" id="XMLReader" cols="80" rows="11" value={xmlFormat(MSGXML)} readOnly={true}>
                                     </textarea>
                                     <div className='MSGControlButtons'>
                                         <button onClick={handleOpenBase}>Open Base Message</button>
-                                        <button>Save</button>
+                                        <button>Edit</button>
                                     </div>
                                 </>
                             }
