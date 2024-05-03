@@ -98,6 +98,15 @@
     background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
     z-index: 1; /* Overlay sits above the background */
 }
+.advancedOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+    z-index: 3; /* Overlay sits above the background */
+}
 
 .editForm {
     position: fixed;

@@ -1,15 +1,16 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { generateConsequentNumber } from '../../../Utils/Utils';
+import { createPortal } from 'react-dom';
 import info from '/infoCircle.svg';
+import xCircle from '/xCircle.svg';
+import editPencil from '/editPencil.svg';
+import RowEdit from './RowEdit';
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
 
-export default function MSGCreation({
-    setIsCreationOpen, setSelectorChoice,
-    displayMSG, fetcher, oldData, setSuccessToast
-}) {
-
+export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, displayMSG,
+    fetcher, oldData, setSuccessToast }) {
     let parser = new DOMParser();
     let xmlDoc;
     let message = [];
@@ -48,6 +49,7 @@ export default function MSGCreation({
         specValSubType: "",
         value: ""
     }]);
+    const [editWindowOpen, setEditWindowOpen] = useState([false, null, null]);
 
     // prefill the form with auto generated data
     function preFillForm() {
@@ -132,6 +134,20 @@ export default function MSGCreation({
             }]);
         }
     }
+    // handle the delete row button
+    function handleDeleteRow(rowIndex) {
+        setMSGDetails(prev => ({
+            ...prev,
+            rootCaseSpecValues: {
+                fields: prev.rootCaseSpecValues.fields.toSpliced(rowIndex, 1),
+            }
+        }))
+    }
+    // handle the edit row button 
+    function handleEditRow(field, rowIndex) {
+        setEditWindowOpen([true, field, rowIndex]);
+    }
+
     // handle change of add row inputs
     function handleRowInsertionChange(e) {
         let { name, value } = e.target;
@@ -139,7 +155,6 @@ export default function MSGCreation({
             ...prev[1], [name]: value
         }]));
     }
-
     // handle the input fields change
     function handleFormDataChange(e) {
         let { name, value } = e.target;
@@ -223,16 +238,27 @@ export default function MSGCreation({
                             </thead>
                             <tbody id='addRowBody'>
                                 {MSGDetails.rootCaseSpecValues.fields.length > 0 &&
-                                    MSGDetails.rootCaseSpecValues.fields.map((field) =>
+                                    MSGDetails.rootCaseSpecValues.fields.map((field, index) =>
                                         <tr key={field.number}>
                                             <td>{field.number}</td>
                                             <td>{field.subField}</td>
                                             <td>{field.specValType}</td>
                                             <td>{field.specValSubType}</td>
                                             <td>{field.value}</td>
-                                            <td></td>
+                                            <td id='MSGTableActions'>
+                                                <button type='button' onClick={() => handleDeleteRow(index)}>
+                                                    <img src={xCircle} alt="Delete Icon" className='lightColor' />
+                                                </button>
+                                                <button type='button' onClick={() => handleEditRow(field, index)} id='lastMSGTableActionButton'>
+                                                    <img src={editPencil} alt="Edit Icon" className='lightColor' />
+                                                </button>
+                                            </td>
                                         </tr>)
                                 }
+                                {editWindowOpen[0] && createPortal(
+                                    <RowEdit field={editWindowOpen[1]} index={editWindowOpen[2]} 
+                                    changeFields={setMSGDetails} setEditWindowOpen={setEditWindowOpen}/>, document.body
+                                )}
                             </tbody>
                         </table>
                         {MSGDetails.rootCaseSpecValues.fields.length == 0 &&

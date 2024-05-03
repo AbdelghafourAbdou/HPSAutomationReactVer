@@ -68,8 +68,20 @@
     color: #fff5f5;
     width: inherit;
 }
-#fieldsTHead {
-    font-size: 1em;
+#fieldsTHead th{
+    font-size: 0.95em;
+    text-align: center;
+}
+
+#MSGTableActions {
+    padding: 3px 0px;
+}
+#MSGTableActions > button{
+    max-height: 40px;
+    margin-bottom: 2px;
+}
+#lastMSGTableActionButton {
+    margin-bottom: 0px !important;
 }
 
 #lastSetOfButtons {
@@ -85,4 +97,38 @@
 
 .lastButton {
     margin-bottom: 1em;
+}
+
+.editFieldForm {
+    position: fixed;
+    top: 0;
+    left: 24.5%;
+    bottom: 0;
+    width: 65vw;
+    z-index: 4;
+    background-color: #2e333c;
+    border-radius: 0.5em;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+
+    font-size: 1.25em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 10px 0px;
+}
+.editFieldForm input {
+    border-radius: 0.15em;
+    min-height: 50px;
+    padding-left: 0.35em;
+    color: #fff5f5;
+}
+.editRowField {
+    display: flex;
+    flex-direction: column;
+    min-width: 80%;
+    margin: 0 auto;
+    margin-bottom: 10px;
 }
