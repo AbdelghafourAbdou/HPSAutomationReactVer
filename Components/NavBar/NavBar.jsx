@@ -57,24 +57,9 @@ export default function NavBar() {
                 <button className='buttonContainer' id='1' onClick={handleClick}>
                     <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
                     API Stream
-                    <Link open={openTab}>{[1, ['/home', '/projects', '/webServices', '/testCases', '/testSuites', '/cardMGT'], ['Statistics',
-                        'Projects', 'Web Services', 'Test Cases', 'Test Suites', 'Card MGT']]}</Link>
+                    <Link open={openTab}>{[1, ['/projects', '/webServices', '/testCases', '/testSuites', '/cardMGT'], 
+                    ['Projects', 'Web Services', 'Test Cases', 'Test Suites', 'Card MGT']]}</Link>
                 </button>
-                {/* <button className='buttonContainer' id='2' onClick={handleClick}>
-                    <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
-                    GUI Stream
-                    <Link open={openTab}>{[2, '/home', 'Home']}</Link>
-                </button>
-                <button className='buttonContainer' id='3' onClick={handleClick}>
-                    <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
-                    Online Stream
-                    <Link open={openTab}>{[3, '/home', 'Home']}</Link>
-                </button>
-                <button className='buttonContainer' id='4' onClick={handleClick}>
-                    <img src={signIcon} alt="sign icon" className='buttonIcon lightColor' />
-                    Batch Stream
-                    <Link open={openTab}>{[4, '/home', 'Home']}</Link>
-                </button> */}
                 <button className='buttonContainer' id='5' onClick={handleClick}>
                     <img src={adminIcon} alt="sign icon" className='buttonIcon lightColor' />
                     Administration

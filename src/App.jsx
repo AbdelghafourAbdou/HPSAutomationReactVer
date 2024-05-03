@@ -1,7 +1,7 @@
 import { } from 'react';
 import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import Layout from '../Layouts/Layout';
-import Stats from '../Pages/Stats/Stats';
+import Stats, { loader as statsLoader } from '../Pages/Stats/Stats';
 import Error404 from '../Pages/ErrorPages/Error404';
 import NetworkError from '../Pages/ErrorPages/NetworkError';
 import Projects, { loader as projectsLoader } from '../Pages/Projects/Projects';
@@ -19,7 +19,7 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<Layout />} >
-        <Route path='home' element={<Stats />} />
+        <Route path='home' element={<Stats />} loader={statsLoader} />
         <Route path='projects' element={<Projects />} loader={projectsLoader} />
         <Route path='webServices' element={<WebServices />} action={webServicesAction} errorElement={<NetworkError />} />
         <Route path='testCases' element={<TestCases />} action={testCasesAction} />
