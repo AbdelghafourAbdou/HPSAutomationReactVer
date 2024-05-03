@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useFetcher, useSearchParams, json } from 'react-router-dom';
 import { InfinitySpin } from 'react-loader-spinner';
 import ViewTestCase from './ViewTestCase';
+import Toast from '../../Components/ReUsable Library/Toast/Toast';
 import eye from '/eye.svg';
 import play from '/play.svg';
 import './TestCases.css';
@@ -57,6 +58,7 @@ export default function TestCases() {
     const [viewOpen, setViewOpen] = useState([false, null]);
     const [loaderVisibility, setLoaderVisibility] = useState(false);
     const [firstView, setFirstView] = useState(Array(size).fill(true));
+    const [networkErrorToast, setNetworkErrorToast] = useState(false);
 
     // swap from REST to SOAP and vice-versa
     function handleTypeChange(row) {
@@ -108,6 +110,9 @@ export default function TestCases() {
         const res = await fetch(`${BASE_URL}/testCaseRunner/${row.id}/${type[(row.id - 1) % size]}`);
         const data = await res.json();
         console.log(data);
+        if(res.status === 500){
+            setNetworkErrorToast(true);
+        }
         setLoaderVisibility(false);
         const formData = new FormData(formRef.current);
         fetcher.submit(formData, { method: 'POST' });
@@ -126,6 +131,17 @@ export default function TestCases() {
             setRunTime(newArr);
         }
     }, [data]);
+
+    // reset toasts
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const toast = document.getElementsByClassName('toast-container');
+            if (toast.length == 0) {
+                setNetworkErrorToast(false);
+            }
+        }, 100);
+        return () => clearInterval(intervalId);
+    }, []);
 
     return (
         <div id='testCasesContainer' >
@@ -192,30 +208,30 @@ export default function TestCases() {
                         </thead>
                         <tbody>
                             {data.map(row =>
-                                    <tr key={`data row ${row.id}`}>
-                                        <td>{row.id}</td>
-                                        <td>{row.name}</td>
-                                        <td>{row.webServiceName}</td>
-                                        <td>{row.projectName}</td>
-                                        <td>{row.wsVersion}</td>
-                                        <td>{runTime[(row.id - 1) % size] && runTime[(row.id - 1) % size].toLocaleString()}</td>
-                                        <td>{row.testCaseResult}</td>
-                                        <td>
-                                            <button onClick={() => handleTypeChange(row)}>
-                                                {firstView[(row.id - 1) % size] && row.testCaseResult !== 'READY' ? row.type : type[(row.id - 1) % size]}
+                                <tr key={`data row ${row.id}`}>
+                                    <td>{row.id}</td>
+                                    <td>{row.name}</td>
+                                    <td>{row.webServiceName}</td>
+                                    <td>{row.projectName}</td>
+                                    <td>{row.wsVersion}</td>
+                                    <td>{runTime[(row.id - 1) % size] && runTime[(row.id - 1) % size].toLocaleString()}</td>
+                                    <td>{row.testCaseResult}</td>
+                                    <td>
+                                        <button onClick={() => handleTypeChange(row)}>
+                                            {firstView[(row.id - 1) % size] && row.testCaseResult !== 'READY' ? row.type : type[(row.id - 1) % size]}
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div className='testCaseButtons'>
+                                            <button onClick={() => handleViewTestCase(row)} >
+                                                <img src={eye} alt="View Button" className='lightColor' />
                                             </button>
-                                        </td>
-                                        <td>
-                                            <div className='testCaseButtons'>
-                                                <button onClick={() => handleViewTestCase(row)} >
-                                                    <img src={eye} alt="View Button" className='lightColor' />
-                                                </button>
-                                                <button onClick={() => handleRunTestCase(row)} >
-                                                    <img src={play} alt="Play Button" className='lightColor' />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            <button onClick={() => handleRunTestCase(row)} >
+                                                <img src={play} alt="Play Button" className='lightColor' />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
                             )}
                         </tbody>
                     </table>
@@ -235,6 +251,11 @@ export default function TestCases() {
                     </div>
                 </>
             }
+            {networkErrorToast &&
+                <Toast event='error'>
+                    <p>Internal Server Error</p>
+                    <p>Please Check if Connection to DB is Established</p>
+                </Toast>}
         </div>
     )
 }
