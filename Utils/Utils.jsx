@@ -1,4 +1,4 @@
-import CryptoJS from "crypto-js";
+import CryptoES from 'crypto-es';
 export const toProper = (title) => {
     let tempArr = title.split('');
     let capitalFirstLetter = tempArr[0].toUpperCase();
@@ -119,23 +119,27 @@ const XOR = (bin1, bin2) => {
 export const generatePINBlock = (PIN, PAN) => {
     const PINBlock1 = `04${PIN}FFFFFFFFFF`;
     const PINBlock2 = `0000${String(PAN).slice(3, 15)}`;
-    let binary1 = convertHexatoBinary(PINBlock1);
-    let binary2 = convertHexatoBinary(PINBlock2);
-    let padded2 = String(binary2).padStart(String(binary1).length, '0');
-    let XORed = XOR(binary1, padded2);
-    let XORedHexa = convertBinarytoHexa(XORed);
+    let PINBlockRes = [];
+    for (let i = 0; i < PINBlock1.length; i++) {
+        let bin1 = convertHexatoBinary(PINBlock1[i]).padStart(5, '0');
+        let bin2 = convertHexatoBinary(PINBlock2[i]).padStart(5, '0');
+        let binRes = XOR(bin1, bin2);
+        let hexRes = convertBinarytoHexa(binRes);
+        PINBlockRes.push(hexRes);
+    }
 
-    var key = CryptoJS.enc.Hex.parse("A2C837F71073D63E804AFB3154AB579B");
+    PINBlockRes = PINBlockRes.join('');
+    let hexKey = "A2C837F71073D63E804AFB3154AB579B";
 
-    var encrypted = CryptoJS.TripleDES.encrypt(XORedHexa, key, {
-        mode: CryptoJS.mode.ECB,
-        padding: CryptoJS.pad.Pkcs7
+    // Convert hex key and data to word array needed for CryptoES
+    const keyWordArray = CryptoES.enc.Hex.parse(hexKey);
+    const dataWordArray = CryptoES.enc.Hex.parse(PINBlockRes);
+    // Encrypt data using 3DES
+    const encrypted = CryptoES.TripleDES.encrypt(dataWordArray, keyWordArray, {
+        mode: CryptoES.mode.ECB,
+        padding: CryptoES.pad.NoPadding
     });
-
-    console.log(PINBlock1, ' : ', PINBlock2);
-    console.log(binary1, ' : ', padded2);
-    console.log(XORed);
-    console.log(XORedHexa);
-    console.log(encrypted.toString());
-    return XORed;
+    // Convert the encrypted data back to a hex string
+    const encryptedHex = encrypted.ciphertext.toString(CryptoES.enc.Hex).toUpperCase();
+    return encryptedHex;
 }

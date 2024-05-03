@@ -26,7 +26,6 @@ export default function Administration() {
     const [configActive, setConfigActive] = useState({
         none: true,
         environment: false,
-        scheduler: false,
         email: false,
     });
 
@@ -34,7 +33,6 @@ export default function Administration() {
         let newActive = {
             none: false,
             environment: false,
-            scheduler: false,
             email: false,
         }
         setConfigActive({ ...newActive, [key]: true })
@@ -54,7 +52,6 @@ export default function Administration() {
             </div>
             <div className='buttonsContainer'>
                 <button onClick={() => handleConfig('environment')}>Environment Config</button>
-                <button onClick={() => handleConfig('scheduler')}>Scheduler Config</button>
                 <button onClick={() => handleConfig('email')}>Email Config</button>
                 <button onClick={() => handleConfig('none')}>Reset</button>
             </div>
