@@ -36,8 +36,8 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
         cardProfile: message[0]?.getAttribute("CardProfile") || '',
         terminalProfile: message[0]?.getAttribute("TerminalProfile") || '',
         isPlayable: message[0]?.getAttribute("IsPlayable") || '',
-        description: message[0]?.getAttribute("HeadLine") || '',
-        headLine: message[0]?.getAttribute("Description") || '',
+        description: message[0]?.getAttribute("Description") || '',
+        headLine: message[0]?.getAttribute("HeadLine") || '',
         rootCaseSpecValues: {
             fields: tableRows,
         },

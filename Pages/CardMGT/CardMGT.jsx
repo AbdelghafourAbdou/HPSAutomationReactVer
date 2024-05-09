@@ -64,15 +64,17 @@ export default function CardMGT() {
 
     async function handleRunSim() {
         setResults(prev => [...(prev.slice(0, 2)), null]);
-        const message = {
-            'choice': selectorChoice.simOption.split(' : ')[0].padStart(3, '0'),
+        if (selectorChoice.simOption) {
+            const message = {
+                'choice': selectorChoice.simOption.split(' : ')[0].padStart(3, '0'),
+            }
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            setSimReqState('fetching');
+            await fetch(`${BASEPATH}/runSim`,
+                { method: 'POST', headers, body: JSON.stringify(message) });
+            setSimReqState('idle');
+            setResults(prev => [...(prev.slice(0, 2)), "Simulation Done"]);
         }
-        const headers = new Headers({ 'Content-Type': 'application/json' });
-        setSimReqState('fetching');
-        await fetch(`${BASEPATH}/runSim`,
-            { method: 'POST', headers, body: JSON.stringify(message) });
-        setSimReqState('idle');
-        setResults(prev => [...(prev.slice(0, 2)), "Simulation Done"]);
     }
 
     // handle the change of selected base message or MSG file
@@ -83,7 +85,7 @@ export default function CardMGT() {
     // handle the opening of selected base message
     async function handleUseSelectedBaseMessage(baseMessageToDisplay = null) {
         setBaseMessageXML(null);
-        const chosenBaseMessage = baseMessageToDisplay ? baseMessageToDisplay : selectorChoice.baseMessage;
+        const chosenBaseMessage = baseMessageToDisplay || selectorChoice.baseMessage;
         if (chosenBaseMessage) {
             const res = await fetch(`${BASEPATH}/baseMessage/${chosenBaseMessage}`);
             const data = await res.text();
@@ -93,7 +95,7 @@ export default function CardMGT() {
     // handle the opening of selected MSG file
     async function handleUseSelectedMSG(MSGToDisplay = null) {
         setMSGXML(null);
-        const chosenMSG = MSGToDisplay ? MSGToDisplay : selectorChoice.MSG;
+        const chosenMSG = MSGToDisplay || selectorChoice.MSG;
         if (chosenMSG) {
             const res = await fetch(`${BASEPATH}/simMessage/${chosenMSG}`);
             const data = await res.text();
@@ -189,8 +191,10 @@ export default function CardMGT() {
                         <div className='XMLSelector'>
                             <select name='MSG' value={selectorChoice.MSG} onChange={handleSelectChange}>
                                 <option value="" key='-1'>-------------------------------------------------</option>
-                                {loadedData.MSGData.map((MSG, index) =>
-                                    <option value={MSG} key={index}>{MSG}</option>)}
+                                {loadedData.MSGData.map((MSG, index) => {
+                                    let parsedMSG = JSON.parse(MSG);
+                                    return <option value={parsedMSG[0]} key={index}>{parsedMSG[1]}</option>;
+                                })}
                             </select>
                             <button onClick={() => handleUseSelectedMSG()}>Use Selected</button>
                             <button onClick={handleCreateMSG}>Create New</button>
