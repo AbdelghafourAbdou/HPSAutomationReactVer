@@ -5,6 +5,7 @@ import xmlFormat from 'xml-formatter';
 import BaseCreation from './Creation/BaseCreation';
 import MSGCreation from './Creation/MSGCreation';
 import Toast from '../../Components/ReUsable Library/Toast/Toast';
+import { generateConsequentNumber } from '../../Utils/Utils';
 import './CardMGT.css';
 
 const BASEPATH = 'http://localhost:8088/pwcAutomationTest/DataBase';
@@ -118,7 +119,26 @@ export default function CardMGT() {
         setIsCreationOpen(prev => ({ ...prev, MSGEdit: true }));
         document.documentElement.classList.add('hideScrollBar');
     }
-
+    // update MSG with latest fields
+    async function handleUpdateMSG() {
+        let consequentNumber = generateConsequentNumber();
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        let message = {
+            newMSGName: `MSG_${consequentNumber}_${selectorChoice.MSG.split('_').slice(2).join('_')}`,
+            originalMSGName: selectorChoice.MSG,
+            latestCardNumber: localStorage.getItem('latestCard'),
+            latestCardProfile: localStorage.getItem('cardProfile').match(/Name="([^"]*)"/)[1],
+            newCaseID: consequentNumber,
+            sequence: Number(consequentNumber.slice(-3)),
+        }
+        const res = await fetch(`${BASEPATH}/updateMessage`,
+            { method: 'POST', headers, body: JSON.stringify(message) });
+        const createdMessage = await res.text();
+        fetcher.load('/cardMGT');
+        setSelectorChoice(prev => ({ ...prev, MSG: createdMessage }));
+        handleUseSelectedMSG(createdMessage);
+        setSuccessToast([true, `New MSG File Created`]);
+    }
     // opens the base message mentionned in the MSG file
     async function handleOpenBase() {
         setBaseMessageXML(null);
@@ -141,10 +161,6 @@ export default function CardMGT() {
         }, 100);
         return () => clearInterval(intervalId);
     }, []);
-
-    // useEffect(() => {
-    //     console.log(results);
-    // }, [results]);
 
     return (
         <>
@@ -173,7 +189,7 @@ export default function CardMGT() {
                                 {loadedData.baseMessagesData.map((baseMessage, index) =>
                                     <option value={baseMessage} key={index}>{baseMessage}</option>)}
                             </select>
-                            <button onClick={() => handleUseSelectedBaseMessage()}>Use Selected</button>
+                            <button onClick={() => handleUseSelectedBaseMessage()}>Open Selected</button>
                             <button onClick={handleCreateBaseMessage}>Create New</button>
                             {isCreationOpen.baseMessage &&
                                 createPortal(<BaseCreation setIsCreationOpen={setIsCreationOpen} setSelectorChoice={setSelectorChoice}
@@ -196,7 +212,7 @@ export default function CardMGT() {
                                     return <option value={parsedMSG[0]} key={index}>{parsedMSG[1]}</option>;
                                 })}
                             </select>
-                            <button onClick={() => handleUseSelectedMSG()}>Use Selected</button>
+                            <button onClick={() => handleUseSelectedMSG()}>Open Selected</button>
                             <button onClick={handleCreateMSG}>Create New</button>
                             {isCreationOpen.MSG &&
                                 createPortal(<MSGCreation setIsCreationOpen={setIsCreationOpen} setSelectorChoice={setSelectorChoice}
@@ -209,6 +225,7 @@ export default function CardMGT() {
                                     </textarea>
                                     <div className='MSGControlButtons'>
                                         <button onClick={handleOpenBase}>Open Base Message</button>
+                                        <button onClick={handleUpdateMSG}>Update Message</button>
                                         <button onClick={handleEditMSG}>Edit</button>
                                     </div>
                                     {isCreationOpen.MSGEdit &&
