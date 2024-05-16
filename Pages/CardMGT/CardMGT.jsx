@@ -236,9 +236,24 @@ export default function CardMGT() {
                         </div>
                     </div>
                     <div className='XMLEditor'>
-                        <h1>Simulator Manipulation</h1>
+                        <h1>Simulator Manipulation (Single)</h1>
                         <div className='XMLSelector' >
                             <select id='simRunner' name='simOption' value={selectorChoice.simOption} onChange={handleSelectChange}>
+                                <option value="" key='-1'>-------------------------------------------------</option>
+                                {loadedData.SimOptionsData.map((simOption, index) =>
+                                    <option value={simOption} key={index}>{simOption}</option>)}
+                            </select>
+                            <button onClick={handleRunSim} disabled={simReqState === 'fetching'} >Run Simulator</button>
+                            <p className='centeringDiv' id='simResult'>
+                                {results[2] === null && simReqState === 'idle' ? 'No Updates'
+                                    : results[2] === null && simReqState === 'fetching' ? 'Running...' : results[2]}
+                            </p>
+                        </div>
+                    </div>
+                    <div className='XMLEditor'>
+                        <h1>Simulator Manipulation (Multi)</h1>
+                        <div className='XMLSelector' >
+                            <select id='simRunner' name='simOption' value={selectorChoice.simOption} onChange={handleSelectChange} multiple>
                                 <option value="" key='-1'>-------------------------------------------------</option>
                                 {loadedData.SimOptionsData.map((simOption, index) =>
                                     <option value={simOption} key={index}>{simOption}</option>)}

@@ -92,6 +92,15 @@ export async function action({ request }) {
         } catch (error) {
             return error;
         }
+    } else if (intent === 'send') {
+        try {
+            const res = await fetch(`${BASEPATH}/sendReportMail`);
+            const data = await res.json();
+            const emailSent = data.emailSent;
+            return {emailSent};
+        } catch (error) {
+            return error;
+        }
     }
 }
 
@@ -108,6 +117,7 @@ export default function EmailConfig() {
     const [recipients, setRecipients] = useState(null);
     const [tableReady, setTableReady] = useState(false);
     const [editForm, setEditForm] = useState(false);
+    const [emailSent, setEmailSent] = useState([false, false]);
 
     // display toasts
     useEffect(() => {
@@ -120,6 +130,8 @@ export default function EmailConfig() {
                 return;
             } else if (status == 'idle' && Object.prototype.hasOwnProperty.call(formData, 'id')) {
                 setSuccessToast(true);
+            } else if (status == 'idle' && Object.prototype.hasOwnProperty.call(formData, 'emailSent')) {
+                setEmailSent([true, formData.emailSent]);
             }
         }
         formRef.current.reset();
@@ -143,6 +155,7 @@ export default function EmailConfig() {
             if (toast.length == 0) {
                 setFailureToast(false);
                 setSuccessToast(false);
+                setEmailSent([false, false]);
             }
         }, 100);
         return () => clearInterval(intervalId);
@@ -224,10 +237,13 @@ export default function EmailConfig() {
                 </label>
                 <div className="emailButtons">
                     <button disabled={status === 'submitting'} name="intent" value="save" >
-                        {status === 'submitting' ? 'Saving ...' : 'Save Recipient'}
+                        {'Save Recipient'}
                     </button>
                     <button disabled={status === 'submitting'} name="intent" value="search">
-                        {status === 'submitting' ? 'Searching ...' : 'Search for Recipients'}
+                        {'Search for Recipients'}
+                    </button>
+                    <button disabled={status === 'submitting'} name="intent" value="send">
+                        {status === 'submitting' ? 'Sending ...' : 'Send to Recipients'}
                     </button>
                 </div>
             </fetcher.Form>
@@ -241,6 +257,12 @@ export default function EmailConfig() {
                 <Toast event='success'>
                     <p>Success</p>
                     <p>Recipient with Name: {formData?.name || savedDataRef.current?.name} {formData?.name ? 'Saved' : 'Updated'}</p>
+                </Toast>
+            }
+            {emailSent[0] &&
+                <Toast event={emailSent[1] ? "success" : "error"}>
+                    <p>{emailSent[1] ? "Success" : "Error"}</p>
+                    <p>Email {emailSent[1] ? "Sent" : "Not Sent"}</p>
                 </Toast>
             }
             {tableReady &&
