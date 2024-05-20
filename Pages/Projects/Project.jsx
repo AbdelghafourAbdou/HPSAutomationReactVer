@@ -40,11 +40,6 @@ export default function Project({ title, id }) {
         return () => clearInterval(intervalId);
     }, []);
 
-
-    function handleReloadServices() {
-
-    }
-
     return (
         <>
             <div className='projectContainer'>
@@ -54,7 +49,6 @@ export default function Project({ title, id }) {
                 </div>
                 <div className='bankButtonsContainer'>
                     <button disabled={loading} onClick={handleReloadParams}>{loading ? 'Loading Params ...' : 'Reload Params'}</button>
-                    <button className='editButton' onClick={handleReloadServices}>Reload Web Service</button>
                 </div>
             </div>
             {successToast &&

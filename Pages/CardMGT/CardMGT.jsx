@@ -5,6 +5,7 @@ import xmlFormat from 'xml-formatter';
 import BaseCreation from './Creation/BaseCreation';
 import MSGCreation from './Creation/MSGCreation';
 import Toast from '../../Components/ReUsable Library/Toast/Toast';
+import MultiSelect from '../../Components/ReUsable Library/Toast/MultiSelect';
 import { generateConsequentNumber } from '../../Utils/Utils';
 import './CardMGT.css';
 
@@ -26,7 +27,7 @@ export default function CardMGT() {
     const laoderData = useLoaderData();
     const loadedData = fetcher.data || laoderData;
     const [latestCard,] = useState(localStorage.getItem('latestCard'));
-    const [results, setResults] = useState(Array(3).fill(null));
+    const [results, setResults] = useState(Array(4).fill(null));
     const [baseMessageXML, setBaseMessageXML] = useState(null);
     const [MSGXML, setMSGXML] = useState(null);
     const [selectorChoice, setSelectorChoice] = useState({
@@ -41,6 +42,11 @@ export default function CardMGT() {
     });
     const [successToast, setSuccessToast] = useState([false, null]);
     const [simReqState, setSimReqState] = useState('idle');
+    const [multiSimReqState, setMultiSimReqState] = useState('idle');
+    const [schedulerState, setSchedulerState] = useState('idle');
+    const [selectedMultiSimOptions, setSelectedMultiSimOptions] = useState([]);
+    const multiSelectState = [selectedMultiSimOptions, setSelectedMultiSimOptions];
+    const [scheduledDT, setScheduledDT] = useState(new Date().toISOString().slice(0, 16));
 
     // activate the card
     async function handleActivateCard() {
@@ -54,17 +60,18 @@ export default function CardMGT() {
 
     // create a card profile to the XML
     async function handleCardProfile() {
-        setResults(prev => [prev[0], null, prev[2]]);
+        setResults(prev => [prev[0], null, prev[2], prev[3]]);
         const headers = new Headers({ 'Content-Type': 'text/html' });
         const res = await fetch(`${BASEPATH}/addCardProfile?cardNumber=${latestCard}`,
             { headers });
         const data = await res.text();
         data.indexOf('<CardProfile') !== -1 ? localStorage.setItem('cardProfile', data) : null;
-        setResults(prev => [prev[0], data, prev[2]]);
+        setResults(prev => [prev[0], data, prev[2], prev[3]]);
     }
 
+    // run PSTT simulator
     async function handleRunSim() {
-        setResults(prev => [...(prev.slice(0, 2)), null]);
+        setResults(prev => [...(prev.slice(0, 2)), null, prev[3]]);
         if (selectorChoice.simOption) {
             const message = {
                 'choice': selectorChoice.simOption.split(' : ')[0].padStart(3, '0'),
@@ -74,7 +81,64 @@ export default function CardMGT() {
             await fetch(`${BASEPATH}/runSim`,
                 { method: 'POST', headers, body: JSON.stringify(message) });
             setSimReqState('idle');
-            setResults(prev => [...(prev.slice(0, 2)), "Simulation Done"]);
+            setResults(prev => [...(prev.slice(0, 2)), "Simulation Done", prev[3]]);
+        }
+    }
+    async function runMultiSim() {
+        setResults(prev => [...prev.slice(0, 3), null]);
+        if (selectedMultiSimOptions.length) {
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            setMultiSimReqState('fetching');
+            try {
+                for (const option of selectedMultiSimOptions) {
+                    const message = { 'choice': option.split(' : ')[0].padStart(3, '0') };
+                    const response = await fetch(`http://localhost:8088/pwcAutomationTest/DataBase/runSim`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(message)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Failed to run simulation for option: ${option}`);
+                    }
+                    setResults(prev => [...(prev.slice(0, 3)), "Simulation Done"]);
+                }
+            } catch (error) {
+                console.error("Error running simulations:", error);
+                setResults(prev => [...(prev.slice(0, 3)), "Simulation Failed"]);
+            } finally {
+                setSelectedMultiSimOptions([]);
+                setMultiSimReqState('idle');
+            }
+        }
+    }
+    async function scheduleMultiSim() {
+        if (selectedMultiSimOptions.length) {
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            setSchedulerState('fetching');
+            try {
+                for (const option of selectedMultiSimOptions) {
+                    const fullDate = new Date(scheduledDT);
+                    fullDate.setHours(fullDate.getHours() + 1);
+                    const message = {
+                        'choice': option.split(' : ')[0].padStart(3, '0'),
+                        'date': fullDate
+                    };
+                    const response = await fetch(`http://localhost:8088/pwcAutomationTest/DataBase/scheduleSim`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(message)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Failed to schedule simulation for option: ${option}`);
+                    }
+                    setSuccessToast([true, 'Scheduled Successfully']);
+                }
+            } catch (error) {
+                console.error("Error running simulations:", error);
+            } finally {
+                setSelectedMultiSimOptions([]);
+                setSchedulerState('idle');
+            }
         }
     }
 
@@ -151,6 +215,11 @@ export default function CardMGT() {
         setBaseMessageXML(data);
     }
 
+    // handle date and time selection
+    const handleDateTimeChange = (event) => {
+        setScheduledDT(event.target.value);
+    };
+
     // reset toasts
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -165,7 +234,7 @@ export default function CardMGT() {
     return (
         <>
             <div className='titleContainer'>
-                Card Management
+                PSTT Management
             </div>
             <div className='controlPanel'>
                 <h2 className='latestCard'>Card: {latestCard ? latestCard : 'No Card Created Recently'}</h2>
@@ -253,15 +322,16 @@ export default function CardMGT() {
                     <div className='XMLEditor'>
                         <h1>Simulator Manipulation (Multi)</h1>
                         <div className='XMLSelector' >
-                            <select id='simRunner' name='simOption' value={selectorChoice.simOption} onChange={handleSelectChange} multiple>
-                                <option value="" key='-1'>-------------------------------------------------</option>
-                                {loadedData.SimOptionsData.map((simOption, index) =>
-                                    <option value={simOption} key={index}>{simOption}</option>)}
-                            </select>
-                            <button onClick={handleRunSim} disabled={simReqState === 'fetching'} >Run Simulator</button>
+                            <MultiSelect options={loadedData.SimOptionsData} multiSelectState={multiSelectState} />
+                            <div className='centeringDiv' style={{ flexDirection: 'column' }} >
+                                <button style={{ minWidth: '100%' }} onClick={runMultiSim} disabled={multiSimReqState === 'fetching'} >Run Simulator</button>
+                                <label htmlFor="datetime">Choose Date and Time:</label>
+                                <input type="datetime-local" id="datetime" name="datetime" value={scheduledDT} onChange={handleDateTimeChange} />
+                                <button style={{ minWidth: '100%' }} onClick={scheduleMultiSim} disabled={schedulerState === 'fetching'} >Schedule Simulator</button>
+                            </div>
                             <p className='centeringDiv' id='simResult'>
-                                {results[2] === null && simReqState === 'idle' ? 'No Updates'
-                                    : results[2] === null && simReqState === 'fetching' ? 'Running...' : results[2]}
+                                {results[3] === null && multiSimReqState === 'idle' ? 'No Updates'
+                                    : results[3] === null && multiSimReqState === 'fetching' ? 'Running...' : results[3]}
                             </p>
                         </div>
                     </div>

@@ -1,11 +1,16 @@
-import { } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { json } from 'react-router-dom';
 import { useFetcher } from 'react-router-dom';
+import { InfinitySpin } from 'react-loader-spinner';
+import Toast from '../../Components/ReUsable Library/Toast/Toast';
+import SuiteCreation from './SuiteCreation';
 import info from '/infoCircle.svg';
+import play from '/play.svg';
+import xCircle from '/xCircle.svg';
 import './TestSuites.css';
 
 const BASE_URL = 'http://localhost:8088/pwcAutomationTest';
-const size = 6;
+const size = 50;
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }) {
@@ -33,20 +38,72 @@ export async function action({ request }) {
 }
 
 export default function TestSuites() {
+    const formRef = useRef(null);
     const fetcher = useFetcher();
     const actionData = fetcher.data;
     const status = fetcher.state;
+    const [creation, setCreation] = useState([false, null]);
+    const [loaderVisibility, setLoaderVisibility] = useState(false);
+    const [networkErrorToast, setNetworkErrorToast] = useState(false);
+
+    // handle the closing of the creation form
+    async function openCreation() {
+        const res = await fetch(`${BASE_URL}/searchTestCases?page=0&size=100`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ project: '', status: '', testCase: '', webService: '', wsVersion: '' }),
+        });
+        const data = await res.json();
+        const filteredOptions = [];
+        data.content.map(test => {
+            filteredOptions.push(`${test.id} : ${test.name}`);
+        });
+        setCreation([true, filteredOptions]);
+        document.documentElement.classList.add('hideScrollBar');
+    }
+
+    // handle button that runs the test suite
+    async function handleRunTestSuite(id) {
+        setLoaderVisibility(true);
+        const res = await fetch(`${BASE_URL}/testSuiteRunner/${id}/REST`);
+        if (res.status === 500) {
+            setNetworkErrorToast(true);
+        }
+        const formData = new FormData(formRef.current);
+        fetcher.submit(formData, { method: 'POST' });
+        setLoaderVisibility(false);
+    }
+    // handle button that runs the test suite
+    async function handleDeleteTestSuite(id) {
+        setLoaderVisibility(true);
+        const res = await fetch(`${BASE_URL}/deleteTestSuite/${id}`);
+        if (res.status === 500) {
+            setNetworkErrorToast(true);
+        }
+        const formData = new FormData(formRef.current);
+        fetcher.submit(formData, { method: 'POST' });
+        setLoaderVisibility(false);
+    }
+
+    // reset toasts
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const toast = document.getElementsByClassName('toast-container');
+            if (toast.length == 0) {
+                setNetworkErrorToast(false);
+            }
+        }, 100);
+        return () => clearInterval(intervalId);
+    }, []);
 
     return (
         <>
             <div className='titleContainer'>
                 Test Suites
             </div>
-            <fetcher.Form method='post' className='testSuiteFormContainer' replace>
+            <fetcher.Form ref={formRef} method='post' className='testSuiteFormContainer' replace>
                 <div className='fieldContainer'>
-                    <label htmlFor='projectSelection'>
-                        Project:
-                    </label>
+                    <label htmlFor='projectSelection'>Project:</label>
                     <select id='projectSelection' name='project'>
                         <option value="" key="0">All</option>
                         <option value="COSMOTE" key="1">COSMOTE</option>
@@ -70,7 +127,10 @@ export default function TestSuites() {
                         <option value="READY" key="3">READY</option>
                     </select>
                 </div>
-                <button disabled={status === 'submitting'}>{status === 'submitting' ? 'Searching...' : 'Search'}</button>
+                <div className='suiteButtons'>
+                    <button disabled={status === 'submitting'}>{status === 'submitting' ? 'Searching...' : 'Search'}</button>
+                    <button onClick={openCreation}>New</button>
+                </div>
             </fetcher.Form>
             {actionData &&
                 <>
@@ -87,6 +147,25 @@ export default function TestSuites() {
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            {actionData?.content.map(row => (
+                                <tr key={row.id}>
+                                    <td>{row.id}</td>
+                                    <td>{row.name}</td>
+                                    <td>{row.projectName}</td>
+                                    <td>{row.runDate}</td>
+                                    <td>{row.time}</td>
+                                    <td>{row.testSuiteResult}</td>
+                                    <td>{row.type}</td>
+                                    <td>
+                                        <div className='testCaseButtons'>
+                                            <button onClick={() => handleRunTestSuite(row.id)}><img src={play} alt="Play Button" className='lightColor' /></button>
+                                            <button onClick={() => handleDeleteTestSuite(row.id)}><img src={xCircle} alt="Delete Button" className='lightColor' /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                     {actionData?.empty &&
                         <div className='centeringDiv'>
@@ -98,6 +177,20 @@ export default function TestSuites() {
                     }
                 </>
             }
+            {creation[0] && <SuiteCreation creation={creation} setCreation={setCreation} fetcher={fetcher} formData={new FormData(formRef.current)} />}
+            {loaderVisibility &&
+                <>
+                    <div className='overlay'></div>
+                    <div className='loaderSpinner'>
+                        <InfinitySpin width="200" color="#3e7edf" />
+                    </div>
+                </>
+            }
+            {networkErrorToast &&
+                <Toast event='error'>
+                    <p>Internal Server Error</p>
+                    <p>Please Check if Connection to DB is Established</p>
+                </Toast>}
         </>
     )
 }

@@ -1,0 +1,19 @@
+.customSelect {
+    padding: 10px;
+    width: 400px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.customOption {
+    margin: 5px 0;
+}
+.customOptionText {
+    margin-left: 5px;
+}
+.customOption label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+}

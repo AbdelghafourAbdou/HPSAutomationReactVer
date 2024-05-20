@@ -25,3 +25,19 @@
     border-radius: 0.25em;
     background-color: #295393;
 }
+
+.suiteButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
+.suiteCreationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.maxWidthInherit {
+    width: inherit !important;
+}

@@ -24,7 +24,7 @@ function App() {
         <Route path='webServices' element={<WebServices />} action={webServicesAction} errorElement={<NetworkError />} />
         <Route path='testCases' element={<TestCases />} action={testCasesAction} />
         <Route path='testSuites' element={<TestSuites />} action={testSuitesAction} />
-        <Route path='cardMGT' element={<CardMGT />} loader={cardMGTLoader} errorElement={<NetworkError />} />
+        <Route path='PSTTMGT' element={<CardMGT />} loader={cardMGTLoader} errorElement={<NetworkError />} />
         <Route path='administration' element={<Administration />} errorElement={<NetworkError />}
           action={emailAction}
           loader={administrationLoader} />

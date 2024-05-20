@@ -52,7 +52,6 @@ export default function EnvConfig({ dbConfig, jbossConfig }) {
                     <div className='configButtons'>
                         <button onClick={() => handleTest('db')}>Test</button>
                         <button onClick={() => handleReConnect()}>Reconnect</button>
-                        <button className='editButton'>Edit</button>
                     </div>
                 </div>
                 <div className='config'>
@@ -62,19 +61,8 @@ export default function EnvConfig({ dbConfig, jbossConfig }) {
                     <p>{jbossConfig.port}</p>
                     <div className='configButtons'>
                         <button onClick={() => handleTest('jboss')}>Test</button>
-                        <button className='editButton'>Edit</button>
                     </div>
                 </div>
-                {/* <div className='config'>
-                <h1 className='configTitle'>UNIX Configuration</h1>
-                <p>{jbossConfig.name}</p>
-                <p>{jbossConfig.ipAddress}</p>
-                <p>{jbossConfig.port}</p>
-                <div className='configButtons'>
-                <button>Test</button>
-                <button className='editButton'>Edit</button>
-                </div>
-            </div> */}
             </div>
             {
                 displayMessage[0] !== false  &&
