@@ -99,7 +99,7 @@ export default function BaseCreation({ setIsCreationOpen, setSelectorChoice, dis
 
         setIsCreationOpen(prev => ({ ...prev, baseMessage: false }));
         document.documentElement.classList.remove('hideScrollBar');
-        fetcher.load('/cardMGT');
+        fetcher.load('/PSTTMGT');
         setSelectorChoice(prev => ({ ...prev, baseMessage: createdMessage}));
         displayBase(createdMessage);
         setSuccessToast([true, "Base Message Created"]);

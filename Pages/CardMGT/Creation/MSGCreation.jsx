@@ -111,7 +111,7 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
         oldData ? setIsCreationOpen(prev => ({ ...prev, MSGEdit: false }))
             : setIsCreationOpen(prev => ({ ...prev, MSG: false }));
         document.documentElement.classList.remove('hideScrollBar');
-        fetcher.load('/cardMGT');
+        fetcher.load('/PSTTMGT');
         setSelectorChoice(prev => ({ ...prev, MSG: createdMessage }));
         displayMSG(createdMessage);
         let successMessage = altSequence ? "Created" : "Updated";

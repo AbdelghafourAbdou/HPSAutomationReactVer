@@ -28,11 +28,11 @@ export default function SuiteCreation({ creation, setCreation, fetcher, formData
         selectedTests.map((test) => {
             idsArr.push(parseInt(test.match(/^\d+/)[0], 10));
         });
-        setSuiteDetails(prev => ({ ...prev, stepIds: idsArr }));
+        let message = {...suiteDetails, stepIds: idsArr};
         await fetch(`${BASE_URL}/newTestSuite`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(suiteDetails),
+            body: JSON.stringify(message),
         });
         fetcher.submit(formData, { method: 'POST' });
         closeCreation();

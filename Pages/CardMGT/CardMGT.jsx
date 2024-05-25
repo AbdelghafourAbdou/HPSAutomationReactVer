@@ -186,22 +186,26 @@ export default function CardMGT() {
     // update MSG with latest fields
     async function handleUpdateMSG() {
         let consequentNumber = generateConsequentNumber();
-        const headers = new Headers({ 'Content-Type': 'application/json' });
-        let message = {
-            newMSGName: `MSG_${consequentNumber}_${selectorChoice.MSG.split('_').slice(2).join('_')}`,
-            originalMSGName: selectorChoice.MSG,
-            latestCardNumber: localStorage.getItem('latestCard'),
-            latestCardProfile: localStorage.getItem('cardProfile').match(/Name="([^"]*)"/)[1],
-            newCaseID: consequentNumber,
-            sequence: Number(consequentNumber.slice(-3)),
+        try {
+            const headers = new Headers({ 'Content-Type': 'application/json' });
+            let message = {
+                newMSGName: `MSG_${consequentNumber}_${selectorChoice.MSG.split('_').slice(2).join('_')}`,
+                originalMSGName: selectorChoice.MSG,
+                latestCardNumber: localStorage.getItem('latestCard'),
+                latestCardProfile: localStorage.getItem('cardProfile').match(/Name="([^"]*)"/)[1],
+                newCaseID: consequentNumber,
+                sequence: Number(consequentNumber.slice(-3)),
+            }
+            const res = await fetch(`${BASEPATH}/updateMessage`,
+                { method: 'POST', headers, body: JSON.stringify(message) });
+            const createdMessage = await res.text();
+            fetcher.load('/PSTTMGT');
+            setSelectorChoice(prev => ({ ...prev, MSG: createdMessage }));
+            handleUseSelectedMSG(createdMessage);
+            setSuccessToast([true, `New MSG File Created`]);
+        } catch (error) {
+            console.log(error);
         }
-        const res = await fetch(`${BASEPATH}/updateMessage`,
-            { method: 'POST', headers, body: JSON.stringify(message) });
-        const createdMessage = await res.text();
-        fetcher.load('/cardMGT');
-        setSelectorChoice(prev => ({ ...prev, MSG: createdMessage }));
-        handleUseSelectedMSG(createdMessage);
-        setSuccessToast([true, `New MSG File Created`]);
     }
     // opens the base message mentionned in the MSG file
     async function handleOpenBase() {
