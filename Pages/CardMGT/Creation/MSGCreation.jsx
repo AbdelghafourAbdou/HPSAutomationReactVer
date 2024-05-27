@@ -78,7 +78,7 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
     }
 
     // handle the creation of the MSG file
-    async function handleMSGFileCreation(e, altSequence = false) {
+    async function handleMSGFileCreation(e, newFile, altSequence = false) {
         e.preventDefault();
         let name, caseId, sequence;
         if (altSequence) {
@@ -114,7 +114,7 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
         fetcher.load('/PSTTMGT');
         setSelectorChoice(prev => ({ ...prev, MSG: createdMessage }));
         displayMSG(createdMessage);
-        let successMessage = altSequence ? "Created" : "Updated";
+        let successMessage = altSequence||newFile ? "Created" : "Updated";
         setSuccessToast([true, `MSG File ${successMessage}`]);
     }
 
@@ -302,10 +302,10 @@ export default function MSGCreation({ setIsCreationOpen, setSelectorChoice, disp
                     {
                         oldData ?
                             <div id='lastSetOfButtons' className='lastButton'>
-                                <button onClick={(e) => handleMSGFileCreation(e)}>Overwrite Existing MSG</button>
-                                <button onClick={(e) => handleMSGFileCreation(e, true)}>Create New MSG</button>
+                                <button onClick={(e) => handleMSGFileCreation(e, false)}>Overwrite Existing MSG</button>
+                                <button onClick={(e) => handleMSGFileCreation(e, false, true)}>Create New MSG</button>
                             </div>
-                            : <button className='lastButton' onClick={(e) => handleMSGFileCreation(e)}>Save MSG File</button>
+                            : <button className='lastButton' onClick={(e) => handleMSGFileCreation(e, true)}>Save MSG File</button>
                     }
                 </form>
             </div>
